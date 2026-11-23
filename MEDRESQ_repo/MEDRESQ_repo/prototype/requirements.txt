@@ -1,7 +1,0 @@
-numpy>=1.26
-pandas>=2.0
-scipy>=1.11
-flask>=3.0
-# optional, only for `python forecast.py` (forecast benchmark):
-# scikit-learn>=1.3
-reportlab>=4.0
