@@ -1,0 +1,20 @@
+# Generated on first run of the demo app: never commit
+prototype/accounts.json
+prototype/PASSWORDS.txt
+accounts.json
+PASSWORDS.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log.tmp
