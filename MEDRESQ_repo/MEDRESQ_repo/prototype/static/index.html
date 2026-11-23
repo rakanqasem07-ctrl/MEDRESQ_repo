@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEDRESQ</title>
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#0e6b6f">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{--bg:#edf2f1;--panel:#fff;--ink:#12262b;--mut:#587077;--line:#d3dedc;--teal:#0e6b6f;--teal2:#0b565a;--soft:#e3eeec;
+--red:#d6382c;--amber:#e8a21a;--green:#2f8f63;--rail:#12262b;--railink:#d7e6e4;--field:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1719;--panel:#122326;--ink:#e6f0ef;--mut:#92aaae;--line:#223a3e;--soft:#183135;--teal:#3fb3b0;--teal2:#2c8f8c;--rail:#08110f;--field:#0f1f22}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:232px 1fr;min-height:100vh;font-variant-numeric:tabular-nums}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+aside{background:var(--rail);color:var(--railink);padding:22px 14px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh}
+.brand{padding:0 8px}.brand b{display:block;font-size:22px;letter-spacing:.2px;color:#fff;font-weight:700}
+.brand span{font-size:12.5px;line-height:1.35;color:#8fb0ac;display:block;margin-top:2px}
+nav{display:flex;flex-direction:column;gap:2px}
+nav button{border:0;background:none;color:var(--railink);padding:10px 12px;font:inherit;font-weight:560;cursor:pointer;text-align:left;border-radius:8px;border-left:3px solid transparent}
+nav button:hover{background:rgba(255,255,255,.06)}
+nav button.on{background:rgba(63,179,176,.16);color:#fff;border-left-color:#3fb3b0}
+.clock{margin-top:auto;padding:14px 12px;border-radius:10px;background:rgba(255,255,255,.05)}
+.clock small{display:block;color:#8fb0ac;font-size:12px}.clock b{font-size:34px;line-height:1.1;color:#fff;font-weight:650}
+.clock .go{display:flex;gap:6px;margin-top:10px}
+.clock button{flex:1;border:1px solid rgba(255,255,255,.22);background:none;color:#fff;border-radius:7px;padding:7px 0;font:inherit;font-weight:600;cursor:pointer}
+.clock button:hover{background:rgba(255,255,255,.1)}
+.sim{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;color:#1b1300;background:repeating-linear-gradient(135deg,#e8a21a 0 10px,#f0b73f 10px 20px);text-align:center}
+.shell{min-width:0}
+main{max-width:1180px;margin:0 auto;padding:26px 32px 70px}
+.status{display:flex;flex-wrap:wrap;gap:0;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.status div{padding:2px 28px 14px 0;margin-right:28px;border-right:1px solid var(--line)}
+.status div:last-child{border-right:0}
+.status small{display:block;color:var(--mut);font-size:12.5px}.status b{font-size:24px;font-weight:650}.status b.red{color:var(--red)}
+h2.page{font-size:26px;margin:0 0 14px;font-weight:650;letter-spacing:-.2px}
+.lede{color:var(--mut);margin:-8px 0 20px;max-width:68ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+.card h3{margin:0 0 10px;font-size:17px;font-weight:650}
+.row{display:flex;gap:22px;flex-wrap:wrap}.row>*{flex:1 1 320px}
+button.btn,a.btn{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer;display:inline-block}
+button.btn:hover{background:var(--teal2)}
+button.btn.alt,a.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.btn.alt:hover{background:var(--soft)}
+button.btn.ok{background:var(--green)}button.btn.no{background:transparent;color:var(--red);border:1px solid var(--red)}
+button:disabled{opacity:.5;cursor:default}
+select,input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:12.5px}
+td.n,th.n{text-align:right}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{background:var(--soft);border-radius:6px;padding:2px 9px;font-size:12.5px}
+.chip.warn{background:#fbe3e0;color:#8a2219}
+.muted{color:var(--mut)}.note{font-size:13px;color:var(--mut)}
+.heat{overflow:auto;max-height:470px}
+.heat table{border-collapse:separate;border-spacing:2px;font-size:11px;width:auto}
+.heat td{padding:0;border:0;width:20px;height:22px;min-width:20px;border-radius:4px;text-align:center;font-size:10px;color:rgba(0,0,0,.55);vertical-align:middle}
+.heat th{padding:0 6px 0 0;border:0;font-size:11px;color:var(--mut);position:sticky;left:0;background:var(--panel);text-align:right}
+.heat tr:first-child th{position:sticky;top:0;text-align:center;padding:0 0 3px;z-index:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.sl{display:grid;grid-template-columns:160px 1fr 50px;gap:10px;align-items:center;margin:8px 0}
+input[type=range]{accent-color:var(--teal);padding:0}
+.good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+/* transfer slip */
+.slip{display:grid;grid-template-columns:230px 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.slip.done{opacity:.6}
+.route{background:var(--soft);padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-right:2px dashed var(--line)}
+.node{text-align:center}.node b{display:block;font-size:20px;font-weight:700}.node small{color:var(--mut);font-size:12px}
+.pipe{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pipe i{display:block;width:2px;height:16px;background:var(--teal)}
+.pipe .qty{font-size:30px;font-weight:700;color:var(--teal);line-height:1}.pipe small{color:var(--mut);font-size:12px}
+.slip .body{padding:18px 20px}.slip h4{margin:0 0 4px;font-size:18px;font-weight:650}
+.slip .fig{display:flex;gap:26px;flex-wrap:wrap;margin:12px 0 4px}
+.fig small{display:block;color:var(--mut);font-size:12px}.fig b{font-size:19px;font-weight:650}.fig b.net{color:var(--green)}
+.slip .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.stop{background:var(--panel);border:1px solid var(--red);border-left:6px solid var(--red);border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.stop h4{margin:0 0 4px;font-size:17px}
+@media(max-width:1000px){.row[style*=nowrap]{flex-wrap:wrap!important}.row[style*=nowrap]>div:first-child{flex:1 1 100%!important}}
+@media(max-width:820px){body{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px}
+nav{flex-direction:row;overflow-x:auto}.clock{margin:0}main{padding:18px 16px 60px}.slip{grid-template-columns:1fr}.route{flex-direction:row;border-right:0;border-bottom:2px dashed var(--line)}.pipe{flex-direction:row}.pipe i{width:16px;height:2px}.sl{grid-template-columns:110px 1fr 40px}}
+
+/* ---------- map ---------- */
+.mapwrap{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-bottom:20px;height:560px;background:var(--panel)}
+.mapwrap.short{height:420px}
+.gm{position:absolute;inset:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;
+ background:#e6ece7 linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px) 0 0/48px 48px}
+.gm.drag{cursor:grabbing}
+.m-tiles img{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;pointer-events:none}
+.m-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.m-lines path{fill:none;stroke:#0e6b6f;stroke-width:3;stroke-linecap:round;stroke-dasharray:7 7;opacity:.85}
+.m-lines path.hl{stroke-width:5;opacity:1;stroke:#0b565a}
+@media (prefers-reduced-motion:no-preference){.m-lines path.hl{animation:flow 1s linear infinite}}
+@keyframes flow{to{stroke-dashoffset:-14}}
+.m-pins{position:absolute;inset:0;pointer-events:none}
+.pin{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer}
+.pin .dot{position:absolute;display:grid;place-items:center;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);color:#fff;transform:translate(-50%,-50%);transition:transform .15s}
+.pin .dot::before,.pin .dot::after{content:"";position:absolute;background:#fff;border-radius:2px}
+.pin .dot::before{width:34%;height:12%}.pin .dot::after{width:12%;height:34%}
+.pin.hit .dot{outline:3px dashed #e8a21a;outline-offset:3px}
+.pin.sel .dot{transform:translate(-50%,-50%) scale(1.22);box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.pin .lbl{position:absolute;transform:translate(-50%,0);top:var(--r);margin-top:6px;background:#fff;color:#12262b;font-weight:700;font-size:12px;padding:1px 7px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.3);white-space:nowrap}
+.pin .bd{position:absolute;left:var(--r);top:calc(var(--r) * -1);background:#d6382c;color:#fff;border:2px solid #fff;border-radius:99px;font-size:11px;font-weight:700;min-width:20px;height:20px;display:grid;place-items:center;transform:translate(-8px,-6px);padding:0 4px}
+.tag{position:absolute;transform:translate(-50%,-50%);background:#0e6b6f;color:#fff;font-weight:700;font-size:12px;padding:2px 9px;border-radius:99px;box-shadow:0 1px 6px rgba(0,0,0,.35);pointer-events:none;white-space:nowrap}
+.tag.hl{background:#0b565a;transform:translate(-50%,-50%) scale(1.15)}
+.m-zoom{position:absolute;left:14px;top:14px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.m-zoom button{width:38px;height:38px;border:0;background:#fff;color:#12262b;font-size:20px;cursor:pointer}
+.m-zoom button+button{border-top:1px solid #dfe6e4}
+.m-zoom button:hover{background:#eef3f2}
+.m-attr{position:absolute;left:8px;bottom:4px;font-size:10.5px;color:#41545a;background:rgba(255,255,255,.75);padding:0 6px;border-radius:4px}
+.maplegend{position:absolute;left:64px;top:14px;right:330px;background:#fff;color:#12262b;border-radius:12px;padding:9px 14px;box-shadow:0 2px 10px rgba(0,0,0,.25);font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center}
+.maplegend span{display:flex;align-items:center;gap:8px}.maplegend i{width:13px;height:13px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.maplegend small{color:#587077}
+.drawer{position:absolute;top:14px;right:14px;bottom:14px;width:300px;background:var(--panel);border-radius:14px;box-shadow:0 6px 28px rgba(0,0,0,.28);padding:18px;overflow:auto}
+.drawer h3{margin:6px 0 0;font-size:22px}.drawer h4{margin:16px 0 6px;font-size:14px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff}
+.badge.risk{background:#d6382c}.badge.watch{background:#c98400}.badge.ok{background:#2f8f63}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.kv small{display:block;color:var(--mut);font-size:12px}.kv b{font-size:19px}
+.need{list-style:none;margin:0;padding:0}.need li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.need li b{color:var(--red)}.need .crit{font-size:11px;background:#fbe3e0;color:#8a2219;border-radius:5px;padding:0 6px;margin-left:6px}
+.banner{display:flex;gap:12px;align-items:center;background:#fff4dc;color:#5c3d00;border:1px solid #f0cf86;border-radius:12px;padding:10px 16px;margin-bottom:16px;font-weight:560}
+.banner.calm{background:var(--soft);color:var(--ink);border-color:var(--line)}
+.banner .pulse{width:10px;height:10px;border-radius:50%;background:#e8a21a;flex:none}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+.heat tr.sel th{color:var(--ink);font-weight:800}.heat tr.sel td{outline:2px solid var(--ink);outline-offset:-2px}
+.heat th.rowh{cursor:pointer}
+@media(max-width:900px){.mapwrap{height:auto;display:flex;flex-direction:column}.mapwrap .gm{position:relative;height:380px}.drawer{position:static;width:auto;box-shadow:none;border-radius:0}.maplegend{display:none}}
+
+.imp{display:grid;grid-template-columns:150px 1fr 150px;gap:10px;align-items:center;margin:6px 0;font-size:13px}
+.imp .track{position:relative;height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.imp .track i{position:absolute;top:0;bottom:0}
+.imp .b{left:0;background:#7aa9ad}.imp .up{background:var(--green)}.imp .down{background:var(--amber)}
+.imp b{text-align:right}
+.headline{border-left:6px solid var(--teal);padding:4px 0 4px 16px;margin:0 0 20px;font-size:21px;line-height:1.35;font-weight:600}
+.headline small{display:block;font-size:13px;font-weight:400;color:var(--mut);margin-top:2px}
+#tour{position:fixed;bottom:20px;left:calc(232px + (100vw - 232px)/2);transform:translateX(-50%);z-index:50;background:var(--rail);color:#fff;border-radius:14px;padding:14px 18px;width:min(680px,calc(100vw - 280px));box-shadow:0 10px 34px rgba(0,0,0,.4);display:none}
+#tour.on{display:block}
+body:has(#tour.on) main{padding-bottom:230px}
+#tour .st{font-size:12px;color:#8fb0ac}#tour p{margin:2px 0 10px;font-size:15.5px}
+#tour .act{display:flex;gap:8px;align-items:center}#tour button{border:1px solid rgba(255,255,255,.3);background:none;color:#fff;border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer}
+#tour button.pri{background:#3fb3b0;border-color:#3fb3b0;color:#06201f;font-weight:700}
+.tourbtn{border:1px solid #3fb3b0;background:none;color:#bfe9e6;border-radius:8px;padding:9px;font:inherit;font-weight:600;cursor:pointer}
+.tourbtn:hover{background:rgba(63,179,176,.15)}
+@media(max-width:820px){#tour{left:50%;width:calc(100vw - 28px)}}
+
+/* ---------- v4: story-first design ---------- */
+.pin .dot::before,.pin .dot::after{display:none}
+.pin .dot{position:absolute;left:0;top:0;width:auto;height:auto;border:0;background:none;box-shadow:none;border-radius:0;outline:0!important;transform:translate(-50%,-50%);overflow:visible;transition:transform .15s}
+.pin.sel .dot{transform:translate(-50%,-50%) scale(1.2);box-shadow:none}
+.pin.lr .lbl{left:calc(var(--r) + 2px);top:-10px;transform:none;margin-top:0}
+.pin.ll .lbl{right:calc(var(--r) + 2px);left:auto;top:-10px;transform:none;margin-top:0}
+.pin .lbl{margin-top:2px;font-size:11.5px}
+.m-lines .pill{fill:#fff;stroke:#0b565a;stroke-width:3}
+.m-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:16px;padding:22px 26px;margin-bottom:16px;color:#fff;background:linear-gradient(120deg,#12262b 0%,#0e6b6f 100%)}
+.hero.bad{background:linear-gradient(120deg,#3a1613 0%,#a62d24 100%)}
+.hero h2{margin:0 0 4px;font-size:26px;line-height:1.2;font-weight:650;letter-spacing:-.2px;max-width:30ch}
+.hero p{margin:0;opacity:.88;max-width:60ch}
+.hero .btn{background:#fff;color:#12262b;padding:12px 20px;font-size:15px}.hero .btn:hover{background:#e3eeec}
+.sect{font-size:17px;font-weight:650;margin:22px 0 4px}
+.sub{color:var(--mut);margin:0 0 12px;font-size:13.5px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:8px}
+.wc{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink);display:grid;gap:3px}
+.wc:hover{border-color:var(--teal)}.wc b{font-size:15px}.wc small{color:var(--mut)}.wc strong{font-size:18px;color:var(--red)}
+.wc .meter{height:6px;border-radius:99px;background:var(--soft);overflow:hidden;margin:4px 0}.wc .meter i{display:block;height:100%;background:var(--red)}
+.crit{font-size:11px;background:#fbe3e0;color:#8a2219;border-radius:5px;padding:0 6px;margin-left:6px;font-weight:600}
+details.card summary{cursor:pointer;font-weight:650;font-size:16px}
+.sug{margin:0;padding-left:18px}.sug li{margin:4px 0;font-size:14px}
+.why{font-size:15.5px;margin:2px 0 6px}.why b{color:var(--red)}.why b.g{color:var(--green)}
+.small-d{font-size:12.5px;color:var(--mut);margin-top:6px}
+.cb{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:center;margin:8px 0;font-size:13.5px}
+.cb .bars{display:grid;gap:3px}.cb .bars div{display:flex;align-items:center;gap:8px}.cb i{display:block;height:11px;border-radius:99px}
+.cb .a{background:#aebcbe}.cb .c{background:var(--teal)}.cb em{font-style:normal;font-size:12px;color:var(--mut);min-width:60px}
+.ar{direction:rtl;text-align:right;font-family:"Segoe UI","Tahoma",system-ui,sans-serif;line-height:1.85}
+.ar h2{font-size:30px;margin:0 0 6px}.ar h3{font-size:20px}
+.steps4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:10px}
+.steps4>div{background:var(--soft);border-radius:12px;padding:14px}.steps4 b{display:block;font-size:16px;margin-bottom:2px}
+.steps4 .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;margin-bottom:6px}
+.ar table th{text-align:right}.ar .legendrow{display:flex;gap:20px;flex-wrap:wrap}.ar .legendrow span{display:flex;align-items:center;gap:8px}
+.ar .dotc{width:16px;height:16px;border-radius:50%;display:inline-block}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+.sum h3{margin:0 0 8px;font-size:19px}.sum p{margin:6px 0}.sum ul{margin:6px 0 0;padding-left:20px}.sum li{margin:4px 0}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin:0 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.keys>div{padding:14px 18px 14px 0;margin-right:18px;border-right:1px solid var(--line)}.keys>div:last-child{border-right:0}
+.keys b{display:block;font-size:30px;font-weight:650;line-height:1.1}.keys small{color:var(--mut);display:block;margin-top:4px;font-size:13px}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px}
+.flow>div{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:14px}.flow b{display:block;font-size:15px;margin-bottom:2px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.pol{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:14px}.pol b{font-weight:650}
+
+/* ---------- overview ---------- */
+.logo{display:flex;align-items:center;gap:10px}.logo svg{flex:none}
+.ov{max-width:1020px;margin:0 auto}
+.ovhero{position:relative;overflow:hidden;border-radius:22px;padding:40px 44px;color:#fff;background:radial-gradient(120% 140% at 85% 20%,#14878c 0%,#0e6b6f 35%,#12262b 100%);display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;margin-bottom:34px}
+.ovhero h1{margin:0 0 12px;font-size:38px;line-height:1.08;letter-spacing:-.8px;font-weight:700}
+.ovhero p{margin:0 0 16px;font-size:16.5px;opacity:.9;max-width:46ch}
+.ovhero .tags{display:flex;gap:8px;flex-wrap:wrap}.ovhero .tags span{border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:3px 12px;font-size:12.5px}
+.ovhero svg.art{width:100%;height:auto;max-height:260px}
+.ovsec{margin:0 0 38px}
+.ovsec>h2{margin:0 0 6px;font-size:25px;letter-spacing:-.3px;font-weight:700}
+.ovsec>p.lead{margin:0 0 16px;color:var(--mut);max-width:70ch;font-size:15.5px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vs>div{border-radius:16px;padding:20px 22px}.vs .old{background:var(--soft)}.vs .new{background:var(--teal);color:#fff}
+.vs h3{margin:0 0 8px;font-size:17px}.vs ul{margin:0;padding-left:18px}.vs li{margin:5px 0}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.flow>div{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 16px 16px}
+.flow>div:not(:last-child)::after{content:"";position:absolute;right:-12px;top:34px;width:10px;height:10px;border-top:3px solid var(--teal);border-right:3px solid var(--teal);transform:rotate(45deg);z-index:2}
+.flow .n{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;margin-bottom:10px}
+.flow b{display:block;font-size:17px;margin-bottom:4px}.flow p{margin:0 0 8px;font-size:14px}.flow small{display:block;color:var(--mut);font-size:12.5px;border-top:1px dashed var(--line);padding-top:8px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.feat>div{display:grid;grid-template-columns:44px 1fr;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.feat .ic{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center}
+.feat b{display:block;margin-bottom:2px;font-size:15.5px}.feat span{font-size:14px;color:var(--mut)}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.stat3>div{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.stat3 .big{font-size:44px;line-height:1;font-weight:750;letter-spacing:-1.5px;color:var(--teal)}
+.stat3 small{display:block;margin-top:8px;color:var(--mut);font-size:13.5px}
+.how{display:flex;flex-wrap:wrap;gap:8px}.how span{background:var(--soft);border-radius:99px;padding:4px 14px;font-size:13.5px}
+.limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.limits>div{border-left:4px solid var(--amber);background:var(--panel);border-radius:0 12px 12px 0;padding:12px 16px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.limits b{display:block}.limits span{font-size:14px;color:var(--mut)}
+.road{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding-top:22px}
+.road::before{content:"";position:absolute;left:0;right:0;top:8px;height:3px;background:linear-gradient(90deg,var(--teal),var(--line))}
+.road>div{position:relative}.road>div::before{content:"";position:absolute;top:-20px;left:0;width:14px;height:14px;border-radius:50%;background:var(--teal);border:3px solid var(--bg)}
+.road b{display:block;font-size:15px}.road span{font-size:13.5px;color:var(--mut)}
+@media(max-width:900px){.ovhero{grid-template-columns:1fr;padding:26px}.vs,.flow,.stat3,.road{grid-template-columns:1fr}.flow>div:not(:last-child)::after{display:none}}
+
+/* ---------- medical theme ---------- */
+:root{--bg:#eef5f5}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='46'%3E%3Cpath d='M23 17v12M17 23h12' stroke='%230e6b6f' stroke-opacity='.07' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")}
+button.btn,a.btn,.hero .btn,#tour button,.tourbtn{border-radius:99px}
+select,input{border-radius:99px;padding-left:14px;padding-right:14px}
+input[type=range]{padding:0}
+.hero,.ovhero{position:relative;overflow:hidden}
+.hero>*,.ovhero>*{position:relative;z-index:1}
+.hero::after,.ovhero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='46' viewBox='0 0 180 46'%3E%3Cpath d='M0 28H46l6-4 5 4h18l6-22 9 38 7-20 5 4h24l6-5 6 5h42' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x;opacity:.22;z-index:0;pointer-events:none}
+.brand .ecg{display:block;margin:8px 0 0;height:22px;width:100%}
+.brand .ecg path{stroke:#3fb3b0;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:240;stroke-dashoffset:240;animation:beat 3.2s ease-in-out infinite}
+@keyframes beat{0%{stroke-dashoffset:240}60%,100%{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.brand .ecg path{animation:none;stroke-dashoffset:0}}
+.status{background:#0c1d21;border:0;border-radius:16px;padding:16px 8px 6px;margin-bottom:22px;position:relative;overflow:hidden}
+.status::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#3fb3b0,#2f8f63,#e8a21a,#d6382c)}
+.status div{border-right:1px solid rgba(255,255,255,.12);padding:0 22px 12px 18px;margin-right:0}
+.status small{color:#8fb0ac}.status b{color:#7ee0c5;font-size:28px;font-weight:650}.status b.red{color:#ff7b6e}
+.sect::before,.ovsec>h2::before,h2.page::before{content:"";display:inline-block;width:14px;height:14px;margin-inline-end:10px;vertical-align:-1px;background:linear-gradient(#d6382c,#d6382c) center/4px 100% no-repeat,linear-gradient(#d6382c,#d6382c) center/100% 4px no-repeat}
+.wc .cap{width:20px;height:20px;vertical-align:-4px;margin-inline-end:6px}
+.slip .route{position:relative}
+.slip .route::before{content:"Rx";position:absolute;top:10px;left:14px;font-weight:800;font-size:15px;color:var(--teal);opacity:.45}
+.card,.slip,.stop,.wc,.feat>div,.flow>div,.stat3>div{border-radius:18px}
+nav button{border-radius:99px}
+.nav-ic{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-inline-end:10px;opacity:.85}
+.langbtn{border:1px solid rgba(255,255,255,.25);background:none;color:#d7e6e4;border-radius:99px;padding:7px 12px;font:inherit;font-weight:600;cursor:pointer}
+.langbtn:hover{background:rgba(255,255,255,.1)}
+html[dir=rtl] nav button{text-align:right;border-left:0;border-right:3px solid transparent}
+html[dir=rtl] nav button.on{border-right-color:#3fb3b0}
+html[dir=rtl] th,html[dir=rtl] td{text-align:right}html[dir=rtl] th.n,html[dir=rtl] td.n{text-align:left}
+html[dir=rtl] .mapwrap,html[dir=rtl] .gm{direction:ltr}
+html[dir=rtl] .drawer,html[dir=rtl] .maplegend{direction:rtl;text-align:right}
+html[dir=rtl] #tour{left:calc((100vw - 232px)/2)}
+html[dir=rtl] .status div{border-right:0;border-left:1px solid rgba(255,255,255,.12)}
+html[dir=rtl] .slip .route::before{left:auto;right:14px}
+html[dir=rtl] .flow>div:not(:last-child)::after{right:auto;left:-12px;transform:rotate(-135deg)}
+html[dir=rtl] .imp b{text-align:left}
+html[dir=rtl] .hero h2,html[dir=rtl] .ovhero h1{letter-spacing:0}
+html[dir=rtl] .ar{direction:rtl}
+@media(max-width:820px){html[dir=rtl] #tour{left:50%}}
+
+
+.svbox{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 16px}
+.svc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;box-shadow:0 8px 24px -14px rgba(10,60,65,.25)}
+.svc small{display:block;color:var(--mut);font-size:12.5px;font-weight:600}.svc b{display:block;font-size:30px;line-height:1.15;color:var(--teal)}.svc span{display:block;color:var(--mut);font-size:13px;line-height:1.35}
+.svnote{grid-column:1/-1;margin:0;font-size:12px;color:var(--mut)}
+@media(max-width:800px){.svbox{grid-template-columns:1fr}}
+
+/* ---- workspaces ---- */
+.chooser{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px}
+.cb{flex:none;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px 14px 9px 10px;color:var(--ink);cursor:pointer;font:inherit;transition:transform .15s,box-shadow .15s,border-color .15s}
+.cb:hover{transform:translateY(-2px);box-shadow:0 10px 22px -14px rgba(10,60,65,.6)}
+.cb .mini{grid-row:1/3;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;background:#2f8f63}
+.cb.risk .mini{background:#d6382c}.cb.watch .mini{background:#e8a21a}
+.cb b{font-size:14px}.cb small{color:var(--mut);font-size:12px}
+.cb.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,107,111,.25),0 12px 24px -14px rgba(14,107,111,.7)}
+.wshead{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:16px 20px;border-radius:18px;margin:6px 0 4px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden}
+.wshead::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:#2f8f63}.wshead.risk::before{background:#d6382c}.wshead.watch::before{background:#e8a21a}
+.wshead h2{margin:0;font-size:22px}.wshead small{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+.av{position:relative;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;background:linear-gradient(135deg,#0e6b6f,#2f8f63)}
+.av .ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--teal);animation:ring 2.4s ease-out infinite}
+.wpills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.wp{padding:5px 12px;border-radius:99px;font-size:13px;font-weight:650;background:var(--soft);color:var(--ink)}.wp.bad{background:rgba(214,56,44,.14);color:#c0392b}.wp.good{background:rgba(47,143,99,.15);color:#237a50}
+.wcard{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 8px 24px -14px rgba(10,60,65,.28)}
+.wic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:22px;font-weight:800;color:#fff;background:#2f8f63}.wcard.out .wic{background:#0e6b6f}
+.wbody{flex:1;min-width:0}.wbody h4{margin:0 0 4px;font-size:16.5px}
+.stp{display:flex;margin:14px 0 6px}.stp span{flex:1;position:relative;text-align:center;font-size:12px;color:var(--mut)}
+.stp span i{display:block;width:16px;height:16px;border-radius:50%;margin:0 auto 4px;background:var(--line);position:relative;z-index:1;transition:background .4s}
+.stp span::before{content:"";position:absolute;top:7px;left:-50%;width:100%;height:3px;background:var(--line)}.stp span:first-child::before{display:none}
+.stp span.on i{background:var(--teal);animation:pop .5s both}.stp span.on::before{background:linear-gradient(90deg,var(--teal),var(--teal));animation:fillx .6s both}
+.stp span.on em{color:var(--ink);font-weight:650}.stp em{font-style:normal}
+.wait{display:flex;align-items:center;gap:10px;margin:6px 0 0;color:var(--mut);font-size:13.5px}
+.dots i{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--teal);animation:blink 1.2s infinite}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+.wscols{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;margin-top:20px}@media(max-width:900px){.wscols{grid-template-columns:1fr}}
+.seg{display:flex;background:var(--soft);border-radius:99px;padding:3px;margin:6px 0 12px}.seg button{flex:1;border:0;background:none;padding:8px;border-radius:99px;font:inherit;font-weight:650;color:var(--mut);cursor:pointer;transition:all .2s}.seg button.on{background:var(--teal);color:#fff;box-shadow:0 4px 12px -6px rgba(14,107,111,.9)}
+.fl{display:block;font-size:12.5px;font-weight:650;color:var(--mut);margin-bottom:10px}.fl select,.fl input{display:block;width:100%;margin-top:4px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:inherit}
+.act{list-style:none;margin:0;padding:0}.act li{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.act li small{margin-left:auto;color:var(--mut)}
+.stk{padding:6px 14px;max-height:520px;overflow:auto}.dbar{position:relative;height:20px;width:100%;min-width:130px;background:var(--soft);border-radius:99px;overflow:hidden}.dbar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;animation:growx .8s both}.dbar span{position:absolute;right:9px;top:0;z-index:1;font-size:12px;font-weight:700;line-height:20px;color:var(--ink)}html[dir=rtl] .dbar span{right:auto;left:9px}html[dir=rtl] .stp span::before{left:auto;right:-50%}.wcard .fig{display:flex;flex-wrap:wrap;gap:6px 34px;margin:10px 0 0}.wcard .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.mb{border:1px solid var(--teal);background:transparent;color:var(--teal);border-radius:99px;padding:3px 11px;font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;white-space:nowrap}.mb:hover{background:var(--teal);color:#fff}.mb.alt{border-color:var(--line);color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:50;padding:11px 20px;border-radius:99px;font-weight:650;color:#fff;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);animation:toastin .35s both}.toast.good{background:#0e6b6f}.toast.bad{background:#b3382c}.toast.out{opacity:0;transition:opacity .4s}
+.flash{animation:flash 1.2s}
+/* ---- motion ---- */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes fillx{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@keyframes growx{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(14,107,111,0)}30%{box-shadow:0 0 0 6px rgba(14,107,111,.35)}}
+@keyframes pl{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes drift{from{background-position:0 0}to{background-position:46px 46px}}
+@keyframes shine{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-24deg)}50%{transform:translateY(-8px) rotate(-18deg)}}
+main>*{animation:rise .55s both}main>*:nth-child(2){animation-delay:.06s}main>*:nth-child(3){animation-delay:.12s}main>*:nth-child(4){animation-delay:.18s}main>*:nth-child(5){animation-delay:.24s}main>*:nth-child(n+6){animation-delay:.3s}
+.wcard,.slip,.wc,.svc{animation:rise .5s both}.wcard:nth-of-type(2),.slip:nth-of-type(2){animation-delay:.08s}.wcard:nth-of-type(3),.slip:nth-of-type(3){animation-delay:.16s}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pl 2.1s ease-out infinite}
+.hero,.ovhero{background-size:220% 220%;animation:shine 14s ease infinite}
+.hero::before,.ovhero::before{content:"";position:absolute;inset:0;z-index:0;opacity:.16;background-image:radial-gradient(circle at 12px 12px,#fff 0 6px,transparent 7px),radial-gradient(circle at 35px 35px,#fff 0 3px,transparent 4px);background-size:46px 46px;animation:drift 9s linear infinite;-webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);mask-image:linear-gradient(90deg,transparent,#000 55%)}
+html[dir=rtl] .hero::before,html[dir=rtl] .ovhero::before{-webkit-mask-image:linear-gradient(270deg,transparent,#000 55%);mask-image:linear-gradient(270deg,transparent,#000 55%)}
+.card::after{content:"\211E";position:absolute;right:16px;top:8px;font-size:44px;line-height:1;color:var(--teal);opacity:.07;pointer-events:none;font-family:"Segoe UI Symbol","Noto Sans Symbols",serif}
+html[dir=rtl] .card::after{right:auto;left:16px}
+.nav-ic{transition:transform .25s}nav button:hover .nav-ic{transform:rotate(-12deg) scale(1.15)}
+.brand b{background:linear-gradient(90deg,#fff,#7fe0d9,#fff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---- login, user, bell ---- */
+#login{display:none;position:fixed;inset:0;z-index:100;overflow:auto;background:radial-gradient(900px 500px at 80% -10%,rgba(63,179,176,.35),transparent 70%),linear-gradient(160deg,#0b1d20,#0f3a3d 60%,#0b1d20);padding:24px}
+#login.on{display:grid;place-items:center;animation:rise .4s both}
+.lbox{width:min(760px,100%);background:var(--panel);border-radius:22px;padding:28px;box-shadow:0 30px 80px -20px rgba(0,0,0,.7)}
+.lhead h1{margin:0;font-size:30px;background:linear-gradient(90deg,var(--ink),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}.lhead p{color:var(--mut);margin:4px 0 16px}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.lc{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;transition:transform .15s,border-color .15s}
+.lc:hover{transform:translateY(-2px)}.lc.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,107,111,.3)}
+.lc .mini{grid-row:1/3;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:#2f8f63}.lc .mini.coordinator{background:#0e6b6f}.lc .mini.reviewer{background:#6b7f86}
+.lc b{font-size:13.5px;line-height:1.2}.lc small{color:var(--mut);font-size:11.5px}
+.lform{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:16px}.lform label{flex:1 1 200px;font-size:12.5px;font-weight:650;color:var(--mut)}.lform input{display:block;width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:inherit}
+.me{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);margin-top:auto}.me+.clock{margin-top:0}
+.who{display:flex;gap:10px;align-items:center}.who b{display:block;color:#fff;font-size:13.5px;line-height:1.2}.who small{color:#8fb0ac;font-size:11.5px}
+.avs{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,#0e6b6f,#2f8f63);color:#fff}
+.so{margin-top:8px;width:100%;border:1px solid rgba(255,255,255,.2);background:none;color:#d7e6e4;border-radius:8px;padding:5px;font:inherit;font-size:12.5px;cursor:pointer}.so:hover{background:rgba(255,255,255,.08)}
+.bell{margin-left:auto;position:relative;border:0;background:rgba(255,255,255,.08);color:#fff;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
+.bell i{display:none;position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;background:#d6382c;color:#fff;font-style:normal;font-size:11px;font-weight:700;place-items:center;padding:0 4px;border:2px solid #0b1d20}
+.bell.ring svg{animation:bellring .9s}
+@keyframes bellring{0%,100%{transform:rotate(0)}15%{transform:rotate(18deg)}35%{transform:rotate(-16deg)}55%{transform:rotate(10deg)}75%{transform:rotate(-6deg)}}
+#bellp{display:none;position:fixed;left:244px;bottom:90px;width:340px;max-height:60vh;overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px -12px rgba(0,0,0,.55);z-index:60}
+#bellp.on{display:block;animation:rise .25s both}
+.bhead{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.bhead button{border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer}
+.nit{display:grid;grid-template-columns:30px 1fr;gap:2px 8px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:10px 14px;font:inherit;cursor:pointer}.nit:hover{background:var(--soft)}
+.nit.new{background:rgba(14,107,111,.09)}.nit .ni{grid-row:1/3;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;background:var(--teal);color:#fff;align-self:start}
+.nit.k-declined .ni{background:#d6382c}.nit.k-shipped .ni,.nit.k-delivered .ni{background:#2f8f63}.nit .nt{font-size:13.5px;line-height:1.35}.nit small{color:var(--mut);font-size:11.5px}
+/* ---- shipments ---- */
+.ships{display:grid;gap:10px;margin-bottom:6px}.ship{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.ship .sr{display:flex;align-items:center;gap:12px}.ship .sr b{font-size:13.5px;flex:none}.ship .lane{position:relative;flex:1;height:6px;border-radius:99px;background:var(--soft)}
+.ship .lane i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#e8a21a,#f0b73f);transition:width 1s}
+.ship .lane u{position:absolute;top:-12px;transform:translateX(-50%);text-decoration:none;font-size:20px}.ship:not(.done) .lane u{animation:bob2 1.4s ease-in-out infinite}
+@keyframes bob2{0%,100%{margin-top:0}50%{margin-top:-4px}}
+.ship .sm{margin-top:6px;color:var(--mut);font-size:13px}.ship.done .lane i{background:#2f8f63}
+.m-lines path.ship{stroke:#e8a21a}.tag.ship{background:#b9770e}
+.alt{margin-top:16px;padding:12px 14px;border-radius:12px;background:rgba(232,162,26,.12);border:1px dashed #e8a21a}.alt h4{margin:0 0 6px;font-size:14px}.alt ul{margin:0 0 6px;padding-left:18px}
+.wcard.gone{opacity:0;transform:translateX(30px) scale(.97);max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0;overflow:hidden;transition:all .6s}
+/* ---- what-if cards ---- */
+.wis{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.wi{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg)}
+.wi small{font-weight:700;color:var(--mut)}.wb{display:grid;grid-template-columns:74px 1fr auto;gap:8px;align-items:center;margin-top:8px;font-size:12px;color:var(--mut)}
+.wb div{height:12px;border-radius:99px;background:var(--soft);overflow:hidden}.wb i{display:block;height:100%;border-radius:99px;animation:growx .9s both}.wb i.a{background:#8da0a5}.wb i.c{background:linear-gradient(90deg,#0e6b6f,#2f8f63)}.wb b{color:var(--ink);font-size:13px}
+.wi p{margin:10px 0 0;font-size:13.5px}
+html[dir=rtl] #bellp{left:auto;right:244px}html[dir=rtl] .bell{margin-left:0;margin-right:auto}html[dir=rtl] .lc,html[dir=rtl] .nit{text-align:right}
+@media(max-width:820px){html,body{overflow-x:hidden}body{grid-template-columns:minmax(0,1fr)!important}.shell,main,aside{min-width:0;max-width:100vw}.mapwrap{height:auto}.wcard{flex-direction:column;gap:10px}.fig{flex-wrap:wrap}.stp em{font-size:10.5px}.lbox{padding:18px}
+ #bellp{left:12px;right:12px;bottom:auto;top:70px;width:auto}
+ aside{gap:8px!important}#nav{display:flex!important;flex-direction:row!important;overflow-x:auto;width:100%;order:5}#nav button{flex:none;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:8px 10px}#nav button.on{border-bottom-color:#3fb3b0;border-left-color:transparent}
+ .brand span{display:none}.me,.clock{flex:1 1 150px;margin-top:0}.clock b{font-size:24px}.tourbtn,.langbtn,.sim{flex:1 1 120px}
+ main{padding:16px 14px 60px}h2.page{font-size:22px}.hero h2,.ovhero h1{font-size:22px}.status div{padding-right:14px;margin-right:14px}.wshead{padding:14px}.wpills{margin-left:0}.chooser{margin:0 -14px;padding-left:14px}}
+/* ---- polish ---- */
+@media (prefers-color-scheme:dark){.m-tiles img{filter:invert(.92) hue-rotate(180deg) saturate(.7) brightness(.9)}}
+.legendrow .dotc{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
+.legendrow{display:flex;gap:10px 22px;flex-wrap:wrap}.legendrow span{display:flex;align-items:center;gap:8px}
+body{background-image:radial-gradient(900px 420px at 85% -80px,rgba(14,107,111,.13),transparent 70%),radial-gradient(700px 400px at -10% 100%,rgba(47,143,99,.10),transparent 70%)}
+aside{background:linear-gradient(180deg,#0f2a2e 0%,#0b1d20 100%)}
+.card{box-shadow:0 1px 2px rgba(10,40,45,.06),0 8px 24px -12px rgba(10,60,65,.18);border-radius:16px;position:relative}
+.card h3{display:flex;align-items:center;gap:10px}
+.card h3::before{content:"";width:6px;height:18px;border-radius:3px;background:linear-gradient(180deg,#3fb3b0,#2f8f63);flex:none}
+.hero{box-shadow:0 14px 34px -18px rgba(11,86,90,.7);background-image:linear-gradient(120deg,#0f2a2e 0%,#0e6b6f 70%,#2f8f63 130%)}
+.hero.bad{background-image:linear-gradient(120deg,#3a1613 0%,#a62d24 100%)}
+button.btn{box-shadow:0 6px 16px -8px rgba(14,107,111,.8);transition:transform .12s,background .12s}button.btn:hover{transform:translateY(-1px)}
+nav button.on{box-shadow:inset 0 0 0 1px rgba(63,179,176,.35)}
+h2.page{color:var(--ink)}
+.gm{border-radius:18px;box-shadow:0 14px 34px -18px rgba(10,60,65,.5)}
+.mapnote{display:none;position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:5;background:#fff;color:#12262b;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+/* accordions */
+.xp{cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s}
+.xp:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(14,107,111,.16)}
+.xp:focus-visible{outline:3px solid #0e6b6f;outline-offset:2px}
+.xp .chev{position:absolute;top:10px;inset-inline-end:10px;width:24px;height:24px;border-radius:50%;background:#0e6b6f;color:#fff;font-style:normal;font-weight:700;display:grid;place-items:center;line-height:1;transition:transform .3s}
+.xp.open .chev{transform:rotate(180deg)}
+.xp .xd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease,margin .35s}
+.xp .xd>div{overflow:hidden;min-height:0}
+.xp.open .xd{grid-template-rows:1fr;margin-top:10px}
+.xp .xd p{margin:0 0 8px;font-size:.92em;line-height:1.55;opacity:0;transition:opacity .3s .1s}
+.xp.open .xd p{opacity:1}
+.xp .ex{background:rgba(14,107,111,.09);border-inline-start:3px solid #0e6b6f;padding:8px 10px;border-radius:8px}
+.xp .ex b{display:block;font-size:.75em;text-transform:uppercase;letter-spacing:.05em;color:#0e6b6f}
+/* settings, data, impact */
+.setg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.sf{display:flex;flex-direction:column;gap:4px;font-size:.9em}.sf input{padding:8px;border:1px solid #c9d6d6;border-radius:8px;font-size:1em}.sf small{opacity:.65}
+.wis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.wi{border:1px solid #c9d6d6;border-radius:12px;padding:14px}.wi.mine{border-color:#0e6b6f;background:rgba(14,107,111,.07)}.wi .bigs{font-size:2.2em;font-weight:800;color:#0e6b6f}
+.drop{display:flex;flex-direction:column;align-items:center;gap:4px;padding:28px;border:2px dashed #9bb;border-radius:14px;cursor:pointer;transition:.2s}
+.drop.hot,.drop:hover{border-color:#0e6b6f;background:rgba(14,107,111,.07)}.drop input{display:none}
+.chain{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin:14px 0}
+.chain>div{flex:1 1 180px;border:1px solid #c9d6d6;border-radius:12px;padding:12px;background:#fff;animation:rise .6s both}
+.chain>div:nth-child(3){animation-delay:.15s}.chain>div:nth-child(5){animation-delay:.3s}.chain>div:nth-child(7){animation-delay:.45s}
+.chain>div.last{border-color:#0e6b6f;background:rgba(14,107,111,.08)}.chain small{text-transform:uppercase;letter-spacing:.05em;opacity:.65}.chain b{display:block;margin:4px 0}.chain span{font-size:.88em;opacity:.8}
+.chain>i{align-self:center;font-style:normal;font-size:1.6em;color:#0e6b6f}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.impt input[type=number]{width:110px}.impt input[type=text]{width:100%;min-width:140px}.impt input{padding:6px;border:1px solid #c9d6d6;border-radius:8px}
+.chip.warn{background:#fff3d6;color:#8a5a00}
+.svbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.svc{border:1px solid #c9d6d6;border-radius:12px;padding:14px}.svc b{display:block;font-size:1.3em;color:#0e6b6f;margin:4px 0}.svnote{grid-column:1/-1;font-size:.85em;opacity:.7}
+.links li{margin:6px 0}
+.so2{display:flex;gap:6px;flex-wrap:wrap}
+.pitchbtn{background:#c2410c!important}
+/* pitch mode */
+#shield{display:none;position:fixed;inset:0;z-index:90;background:transparent}#shield.on{display:block}
+#pitch{display:none;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(760px,calc(100% - 24px));z-index:100;background:#0b2f33;color:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 12px 40px rgba(0,0,0,.4)}#pitch.on{display:block;animation:rise .4s}
+#pitch p{margin:6px 0 10px;font-size:1.05em;line-height:1.5}
+.pbar{height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}.pbar i{display:block;height:100%;background:#5eead4;width:0;animation:pfill linear forwards}
+@keyframes pfill{to{width:100%}}
+.pc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.85em}.pc button{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.pc button:disabled{opacity:.4}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.m-areas{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.m-areas span{position:absolute;left:0;top:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:rgba(14,80,84,.55);text-shadow:0 0 3px #fff,0 0 3px #fff;white-space:nowrap;margin:-6px 0 0 -30px}
+.m-areas span.far{font-style:italic;letter-spacing:.06em;opacity:.7}
+@media (prefers-color-scheme:dark){.m-areas span{color:rgba(190,230,230,.35)}}
+/* page motion */
+#main.enter>*{animation:pgin .55s cubic-bezier(.2,.7,.2,1) both}
+#main.enter>*:nth-child(2){animation-delay:.06s}#main.enter>*:nth-child(3){animation-delay:.12s}#main.enter>*:nth-child(4){animation-delay:.18s}#main.enter>*:nth-child(5){animation-delay:.24s}#main.enter>*:nth-child(n+6){animation-delay:.3s}
+@keyframes pgin{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+.pin{animation:pindrop .6s cubic-bezier(.2,.9,.3,1.3) both}.pin:nth-child(2n){animation-delay:.1s}.pin:nth-child(3n){animation-delay:.2s}
+@keyframes pindrop{from{opacity:0;margin-top:-26px}to{opacity:1;margin-top:0}}
+.m-lines path{stroke-dasharray:8 6;animation:dash 1.2s linear infinite}@keyframes dash{to{stroke-dashoffset:-14}}
+.card{transition:transform .25s,box-shadow .25s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(14,107,111,.12)}
+nav button,.rail button{transition:background .2s,transform .2s}
+
+.howto{display:flex;gap:14px;align-items:flex-start;background:#e7f3fb;border:1px solid #b6d6ee;border-inline-start:6px solid #2b7fc2;border-radius:14px;padding:14px 18px;margin-bottom:16px;color:#12303f}
+.howto>i{flex:none;width:30px;height:30px;border-radius:50%;background:#2b7fc2;color:#fff;font-style:normal;font-weight:800;display:grid;place-items:center}
+.howto b{display:block;font-size:.8em;text-transform:uppercase;letter-spacing:.05em;color:#1d5f94;margin-top:2px}.howto p{margin:2px 0 8px}
+.howto button{margin-inline-start:auto;border:0;background:#2b7fc2;color:#fff;border-radius:99px;padding:8px 16px;cursor:pointer;font:inherit;font-weight:600;flex:none}
+.howto.gone{opacity:0;transform:translateY(-8px);transition:.3s}
+@media (prefers-color-scheme:dark){.howto{background:#12303f;border-color:#2b5c7f;color:#dcefff}.howto b{color:#8fc7f0}}
+#welcome{position:fixed;inset:0;z-index:150;background:rgba(5,25,28,.72);display:grid;place-items:center;padding:16px}
+.wbox{background:#fff;color:#12262b;border-radius:20px;max-width:560px;padding:32px;box-shadow:0 20px 60px #0008;animation:pgin .5s both}
+.wbox h2{margin:0 0 8px;font-size:1.7em;color:#0e6b6f}.wbox ol{font-size:1.05em;line-height:1.8;padding-inline-start:22px}
+@media (prefers-color-scheme:dark){.wbox{background:#0f2a2d;color:#e8f6f5}.wbox h2{color:#5eead4}}
+</style>
+</head>
+<body>
+<aside>
+ <div class="brand"><div class="logo"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="14" fill="none" stroke="#3fb3b0" stroke-width="3.5" stroke-dasharray="62 26" stroke-linecap="round" transform="rotate(-70 17 17)"/><rect x="15" y="9" width="4" height="16" rx="1.5" fill="#fff"/><rect x="9" y="15" width="16" height="4" rx="1.5" fill="#fff"/></svg><b>MEDRESQ</b></div><svg class="ecg" viewBox="0 0 200 22" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12H60l6-4 5 4h12l5-10 8 20 6-12 4 2h18l5-3 5 3h66"/></svg><span>Early warning for medicine shortages across the hospital network</span></div>
+ <nav id="nav"></nav>
+ <div class="me" id="me"></div>
+ <div class="clock"><small>Simulated day</small><b id="clock">-</b><div class="go" id="go"><button onclick="adv(1)">+1 day</button><button onclick="adv(7)">+7 days</button></div></div>
+ <button class="tourbtn" id="tourbtn" onclick="tourStart()">Guided demo</button>
+ <button class="tourbtn" id="helpbtn" onclick="helpAgain()">How to use this page</button>
+ <button class="tourbtn pitchbtn" id="pitchbtn" onclick="pitchStart()">Pitch mode</button>
+ <button class="langbtn" id="lang" onclick="toggleLang()" aria-label="Language">&#1593;&#1585;&#1576;&#1610;</button>
+ <div class="sim">SIMULATED DATA</div>
+</aside>
+<div id="tour"></div>
+<div id="bellp"></div>
+<div id="login"></div>
+<div id="shield"></div><div id="pitch"></div>
+<div class="shell"><main id="main"></main></div>
+<script src="/static/i18n.js"></script>
+<script>
+const TABS=[["start","Start here"],["overview","Overview"],["impact","Impact"],["network","Network"],["centers","My center"],["recs","Recommendations"],["whatif","What-if"],["savings","Savings"],["data","Your data"],["settings","Settings"],["audit","Audit log"]];
+let tab="start",STATE=null,RES=null;
+const $=s=>document.querySelector(s);
+const fmt=(x,d=0)=>x==null?"-":Number(x).toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d});
+let ME=null;
+const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const api=(u,b)=>fetch(u,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:undefined).then(r=>{if(r.status==401&&u!="/api/login"){showLogin();throw new Error("auth")}return r.json()});
+const NAVI={"impact": "<path d=\"M2.5 13.5h11M4 11V8M7 11V5M10 11V7M13 11V3\"/>", "data": "<path d=\"M8 11V3M5 6l3-3 3 3\"/><path d=\"M3 11v2.5h10V11\"/>", "settings": "<path d=\"M3 4.5h6M12 4.5h1M3 8h1M7 8h6M3 11.5h8M14 11.5h-1\"/><circle cx=\"10.5\" cy=\"4.5\" r=\"1.4\"/><circle cx=\"5.5\" cy=\"8\" r=\"1.4\"/><circle cx=\"12.5\" cy=\"11.5\" r=\"1.4\"/>", "centers": "<path d=\"M3 14V6.5L8 3l5 3.5V14\"/><path d=\"M6.5 14V10h3v4M8 5.2v2.2M6.9 6.3h2.2\"/>", "start": "<path d=\"M3 8l5-5 5 5v6H3z\"/>", "overview": "<rect x=\"3\" y=\"2\" width=\"10\" height=\"12\" rx=\"1.5\"/><path d=\"M5.5 6h5M5.5 9h5\"/>", "network": "<circle cx=\"8\" cy=\"8\" r=\"2\"/><circle cx=\"3\" cy=\"3.5\" r=\"1.4\"/><circle cx=\"13\" cy=\"4\" r=\"1.4\"/><circle cx=\"8\" cy=\"13.5\" r=\"1.4\"/><path d=\"M4 4.4l2.6 2.2M12 4.8l-2.6 2M8 10v2.2\"/>", "recs": "<rect x=\"1.8\" y=\"6\" width=\"12.4\" height=\"4.8\" rx=\"2.4\" transform=\"rotate(-30 8 8)\"/><path d=\"M6.4 5.6l3.2 4.8\" transform=\"rotate(-30 8 8)\"/>", "whatif": "<path d=\"M6 2h4M7 2v4l-3.5 6a1.5 1.5 0 001.3 2.2h6.4a1.5 1.5 0 001.3-2.2L9 6V2\"/>", "savings": "<path d=\"M2 12l3.5-4 3 2L14 3.5\"/><path d=\"M10.5 3.5H14V7\"/>", "audit": "<rect x=\"3\" y=\"2\" width=\"10\" height=\"12\" rx=\"1.5\"/><path d=\"M5.5 6l1.2 1.2L9 5M5.5 10.5h5\"/>"};
+const ROLE_TABS={manager:["start","overview","impact","network","centers","whatif","savings","data","audit"],coordinator:null,reviewer:["start","overview","impact","network","centers","recs","whatif","savings","audit"]};
+function nav(){ const allow=ME&&ROLE_TABS[ME.role];$("#nav").innerHTML=TABS.filter(([k])=>!allow||allow.includes(k)).map(([k,t])=>`<button class="${k==tab?"on":""}" onclick="go('${k}')"><svg class="nav-ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${NAVI[k]||""}</svg>${t}</button>`).join("") }
+async function go(k){tab=k;nav();await render()}
+function tilesOff(){try{return localStorage.getItem("medresq_tiles")=="off"}catch(e){return false}}
+function toggleTiles(){try{localStorage.setItem("medresq_tiles",tilesOff()?"on":"off")}catch(e){}if(MAP&&MAP.render)MAP.render();const b=$("#tbtn");if(b)b.textContent=tilesOff()?"Show street map":"Plain map"}
+function tilesHTML(t){queueMicrotask(()=>{const c=$("#clock");if(c)c.textContent=t.day});
+return `<div class="status">
+<div><small>Service level</small><b>${t.service_level}%</b></div>
+<div><small>Stockout days</small><b class="${t.stockout_days>0?"red":""}">${fmt(t.stockout_days)}</b></div>
+<div><small>Expired value (JD)</small><b>${fmt(t.expiry_loss)}</b></div>
+<div><small>Transfers approved</small><b>${t.transfers}</b></div>
+<div><small>Total cost (JD)</small><b>${fmt(t.total_cost)}</b></div></div>`}
+
+/* ---------- tiny web-mercator map (no libraries) ---------- */
+const TS=256;
+const mer=(lat,lng,z)=>{const n=TS*Math.pow(2,z),sn=Math.sin(lat*Math.PI/180);return[(lng+180)/360*n,(0.5-Math.log((1+sn)/(1-sn))/(4*Math.PI))*n]};
+const unmer=(x,y,z)=>{const n=TS*Math.pow(2,z),a=Math.PI-2*Math.PI*y/n;return[180/Math.PI*Math.atan(0.5*(Math.exp(a)-Math.exp(-a))),x/n*360-180]};
+const llOf=(x,y)=>({lat:31.96+(y-45)*0.8/111,lng:35.93+(x-40)*0.8/94});
+const STAT={risk:["#d6382c","At risk"],watch:["#e8a21a","Watch"],ok:["#2f8f63","Stable"]};
+function mkSites(n){return n.sites.map((s,i)=>({...s,idx:i,status:s.low>3?"risk":s.low>0?"watch":"ok"}))}
+function pinSVG(s,R){const c=R+12,rr=R+2.5,len=2*Math.PI*rr,hl=Math.max(0.05,1-Math.min(1,s.low/10)),col=STAT[s.status][0],hosp=s.type=="hospital";
+  const icon=hosp?`<rect x="${c-R*.17}" y="${c-R*.5}" width="${R*.34}" height="${R}" rx="2" fill="${col}"/><rect x="${c-R*.5}" y="${c-R*.17}" width="${R}" height="${R*.34}" rx="2" fill="${col}"/>`:`<text x="${c}" y="${c+R*.3}" text-anchor="middle" font-size="${R*.85}" font-weight="800" fill="${col}" font-family="Segoe UI,system-ui,sans-serif">Rx</text>`;
+  return `<svg class="dot" width="${2*c}" height="${2*c}" viewBox="0 0 ${2*c} ${2*c}">${s.status=="risk"?`<circle class="pulse" cx="${c}" cy="${c}" r="${R+2}" fill="none" stroke="#d6382c" stroke-width="3"/>`:""}<circle cx="${c}" cy="${c+3}" r="${R+5}" fill="rgba(0,0,0,.22)"/><circle cx="${c}" cy="${c}" r="${R}" fill="#fff"/><circle cx="${c}" cy="${c}" r="${rr}" fill="none" stroke="rgba(0,0,0,.13)" stroke-width="5"/><circle cx="${c}" cy="${c}" r="${rr}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${len*hl} ${len}" transform="rotate(-90 ${c} ${c})"/>${s.hit?`<circle cx="${c}" cy="${c}" r="${R+9}" fill="none" stroke="#e8a21a" stroke-width="2.5" stroke-dasharray="4 4"/>`:""}${icon}</svg>`}
+const KIND=s=>s.type=="pharmacy"?"Community pharmacy":s.size>=1.5?"Large hospital":"Hospital";
+const AREAS=[["Downtown",31.9515,35.9390],["Jabal Amman",31.9540,35.9190],["Abdoun",31.9500,35.8870],["Shmeisani",31.9700,35.9040],["Sweileh",32.0270,35.8360],["Marka",31.9960,35.9900],["Khalda",31.9960,35.8330],["Tla' Al-Ali",31.9900,35.8680],["Jubeiha",32.0170,35.8720],["Wadi Seer",31.9480,35.8100],["Airport Road",31.9100,35.9200],["Zarqa direction",32.0600,36.0900,"far"],["Dead Sea direction",31.9000,35.7200,"far"]];
+class GMap{
+ constructor(el,o){this.el=el;this.o=o||{};this.z=11;this.c=[31.96,35.93];this.tiles={};this.sites=[];this.tr=[];this.sel=null;this.hlid=null;
+  el.classList.add("gm");
+  el.innerHTML='<svg class="m-bg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice"><path d="M-20 380 C200 300 320 420 520 330 S760 260 840 300" stroke="#fff" stroke-width="16" fill="none" opacity=".8"/><path d="M120 -20 C180 160 330 220 380 520" stroke="#fff" stroke-width="12" fill="none" opacity=".8"/><path d="M560 -20 C600 150 520 260 700 520" stroke="#fff" stroke-width="10" fill="none" opacity=".7"/><ellipse cx="640" cy="110" rx="120" ry="60" fill="#cfe5d3" opacity=".7"/><ellipse cx="170" cy="440" rx="130" ry="50" fill="#cfe5d3" opacity=".6"/></svg><div class="m-tiles"></div><svg class="m-lines"><defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b565a"/></marker></defs><g></g></svg><div class="m-pins"></div><div class="m-zoom"><button aria-label="Zoom in">+</button><button aria-label="Zoom out">&minus;</button></div><div class="mapnote">Map imagery needs internet. Showing the simple map instead.</div><div class="m-attr">Map &copy; OpenStreetMap contributors</div>';
+  this.tl=el.querySelector(".m-tiles");this.ar=document.createElement("div");this.ar.className="m-areas";this.tl.after(this.ar);AREAS.forEach(a=>{const d=document.createElement("span");d.textContent=a[0];d.className=a[3]||"";this.ar.appendChild(d)});this.ln=el.querySelector(".m-lines g");this.pl=el.querySelector(".m-pins");
+  const zb=el.querySelectorAll(".m-zoom button");zb[0].onclick=()=>this.zoom(1);zb[1].onclick=()=>this.zoom(-1);
+  let d=null;
+  el.addEventListener("pointerdown",e=>{if(e.target.closest(".pin,.m-zoom"))return;d={x:e.clientX,y:e.clientY};el.classList.add("drag");el.setPointerCapture(e.pointerId)});
+  el.addEventListener("pointermove",e=>{if(!d)return;const[cx,cy]=mer(this.c[0],this.c[1],this.z);this.c=unmer(cx-(e.clientX-d.x),cy-(e.clientY-d.y),this.z);d={x:e.clientX,y:e.clientY};this.render()});
+  const up=()=>{d=null;el.classList.remove("drag")};el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
+  let t=0;el.addEventListener("wheel",e=>{e.preventDefault();const n=Date.now();if(n-t<180)return;t=n;this.zoom(e.deltaY<0?1:-1)},{passive:false});
+  el.addEventListener("dblclick",e=>{if(!e.target.closest(".pin"))this.zoom(1)});
+ }
+ zoom(k){this.z=Math.max(8,Math.min(17,Math.round(this.z)+k));this.render()}
+ setSites(list){this.sites=list;this.pl.querySelectorAll(".pin").forEach(x=>x.remove());this.pins={};
+  list.forEach(s=>{const R=12+s.size*4.5,e=document.createElement("div");e.className="pin"+({S03:" lr",S05:" lr",S04:" ll",S06:" ll"}[s.id]||"");e.style.setProperty("--r",(R+9)+"px");
+   e.innerHTML=pinSVG(s,R)+`<span class="lbl">${s.name}</span>${s.low?`<b class="bd">${s.low}</b>`:""}`;
+   e.title=s.name+": "+KIND(s)+", "+s.low+" medicines under 3 days";e.onclick=()=>this.o.onSelect&&this.o.onSelect(s.id);this.pl.appendChild(e);this.pins[s.id]=e});this.render()}
+ setTransfers(tr){this.tr=tr;this.ln.innerHTML="";this.pl.querySelectorAll(".tag").forEach(x=>x.remove());this.paths={};this.tags={};
+  const ns="http://www.w3.org/2000/svg",calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  tr.forEach(t=>{const p=document.createElementNS(ns,"path");p.id="tp"+t.id;if(t.ship)p.setAttribute("class","ship");p.setAttribute("marker-end","url(#arw)");this.ln.appendChild(p);this.paths[t.id]=p;
+   if(!calm){const c=document.createElementNS(ns,"circle");c.setAttribute("r","6");c.setAttribute("class","pill");c.innerHTML='<animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#tp'+t.id+'"/></animateMotion>';this.ln.appendChild(c)}
+   const g=document.createElement("div");g.className="tag"+(t.ship?" ship":"");g.textContent=t.ship?"\u{1F69A} "+t.qty+" units \u00b7 arrives day "+t.arrive:t.qty+" units";this.pl.appendChild(g);this.tags[t.id]=g});this.render()}
+ hl(id){this.hlid=id;for(const k in this.paths){this.paths[k].classList.toggle("hl",+k===id);this.tags[k].classList.toggle("hl",+k===id)}}
+ select(id){this.sel=id;for(const k in this.pins)this.pins[k].classList.toggle("sel",k===id);const p=this.pins[id];if(p)this.pl.appendChild(p)}
+ fit(padRight=0,padV=150,shift=34){const w=this.el.clientWidth-padRight-90,h=this.el.clientHeight-padV;if(w<50||!this.sites.length)return;
+  const la=this.sites.map(s=>s.lat),lo=this.sites.map(s=>s.lng);const bl=[(Math.min(...la)+Math.max(...la))/2,(Math.min(...lo)+Math.max(...lo))/2];
+  const A=mer(Math.max(...la),Math.min(...lo),10),B=mer(Math.min(...la),Math.max(...lo),10);
+  const sx=Math.max(Math.abs(B[0]-A[0]),1),sy=Math.max(Math.abs(B[1]-A[1]),1);
+  let z=10+Math.log2(Math.min(w/sx,h/sy));z=Math.max(8,Math.min(15.5,Math.floor(z*4)/4));
+  this.z=z;const[cx,cy]=mer(bl[0],bl[1],z);this.c=unmer(cx+padRight/2,cy-shift,z);this.render()}
+ render(){const w=this.el.clientWidth,h=this.el.clientHeight;if(!w)return;
+  const z=this.z,[cx,cy]=mer(this.c[0],this.c[1],z),ox=cx-w/2,oy=cy-h/2,zi=Math.floor(z+1e-6),sc=Math.pow(2,z-zi),ts=TS*sc,n=Math.pow(2,zi);
+  const x0=Math.floor(ox/ts),x1=Math.floor((ox+w)/ts),y0=Math.max(0,Math.floor(oy/ts)),y1=Math.min(n-1,Math.floor((oy+h)/ts)),keep={};
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const xx=((x%n)+n)%n,k=zi+"/"+xx+"/"+y+"/"+x;let im=this.tiles[k];
+   if(!im){if(tilesOff())continue;im=new Image();im.alt="";im.draggable=false;im.referrerPolicy="origin";const u1="https://tile.openstreetmap.org/"+zi+"/"+xx+"/"+y+".png";im.onload=()=>{this.ok=1;const n=this.el.querySelector(".mapnote");if(n)n.style.display="none"};im.onerror=()=>{im.style.display="none";this.bad=(this.bad||0)+1;const n=this.el.querySelector(".mapnote");if(n&&!this.ok&&this.bad>2)n.style.display="block"};im.src=u1;this.tl.appendChild(im);this.tiles[k]=im}
+   im.style.width=im.style.height=(ts+0.7)+"px";im.style.transform="translate("+(x*ts-ox)+"px,"+(y*ts-oy)+"px)";keep[k]=1}
+  for(const k in this.tiles)if(!keep[k]||tilesOff()){this.tiles[k].remove();delete this.tiles[k]}
+  this.ar.querySelectorAll("span").forEach((d,i)=>{const[px,py]=mer(AREAS[i][1],AREAS[i][2],z);d.style.transform="translate("+(px-ox)+"px,"+(py-oy)+"px)";d.style.display=z<10.2&&!d.className?"none":""});
+  const pos={};this.sites.forEach(s=>{const[px,py]=mer(s.lat,s.lng,z);pos[s.id]=[px-ox,py-oy];this.pins[s.id].style.transform="translate("+(px-ox)+"px,"+(py-oy)+"px)"});
+  this.tr.forEach(t=>{const a=pos[t.src],b=pos[t.dst];if(!a||!b)return;const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],c=[mx-dy*.18,my+dx*.18];
+   this.paths[t.id].setAttribute("d","M"+a[0]+" "+a[1]+" Q"+c[0]+" "+c[1]+" "+b[0]+" "+b[1]);
+   const kk=t.ship?Math.min(.85,Math.max(.15,t.k||.5)):.5,q=[(1-kk)*(1-kk)*a[0]+2*(1-kk)*kk*c[0]+kk*kk*b[0],(1-kk)*(1-kk)*a[1]+2*(1-kk)*kk*c[1]+kk*kk*b[1]];this.tags[t.id].style.left=q[0]+"px";this.tags[t.id].style.top=q[1]+"px"})}
+}
+let MAP=null;
+addEventListener("resize",()=>MAP&&MAP.render());
+
+function start(){
+  $("#main").innerHTML=`<div class="ov">
+  <div class="hero"><div><h2>MEDRESQ warns you before a medicine runs out</h2><p>It watches medicine stock across hospitals and pharmacies and suggests where spare stock should move. The pharmacist decides.</p></div>
+  <div class="ctas" style="margin:0"><button class="btn" onclick="tourStart()">Start the guided demo</button><button class="btn" onclick="go('network')">Open the map</button></div></div>
+  <div class="card"><h3>The problem</h3><p>Each hospital and pharmacy manages its own stock. One runs out of an important medicine while a nearby one holds more than it needs and some of it expires. Nobody sees the whole picture, so time and money are lost, and sometimes a patient is affected.</p></div>
+  <div class="card"><h3>What MEDRESQ does</h3><div class="steps4">
+   <div><span class="n">1</span><b>Watches</b>Stock at every center, every day.</div>
+   <div><span class="n">2</span><b>Predicts</b>Which medicine runs out, and in how many days.</div>
+   <div><span class="n">3</span><b>Recommends</b>Moving spare stock from one center to another at the lowest cost.</div>
+   <div><span class="n">4</span><b>The pharmacist decides</b>Approve, reject or change the quantity. Nothing moves without approval.</div></div></div>
+  <div class="card"><h3>How to read the map</h3>
+   <p>Each pin is a center. A cross means a hospital and Rx means a pharmacy. The ring around it fills according to how many of its medicines are fine.</p>
+   <div class="legendrow"><span><i class="dotc" style="background:#d6382c"></i>Red: at risk, 4 or more medicines run out within 3 days</span><span><i class="dotc" style="background:#e8a21a"></i>Yellow: watch</span><span><i class="dotc" style="background:#2f8f63"></i>Green: stable</span></div>
+   <p style="margin-top:10px">A dashed yellow ring means the center is hit by the disruption (late shipments or higher demand). Moving arrows are the suggested transfers between centers.</p></div>
+  <div class="card"><h3>What each tab shows</h3><table>
+   <tr><td><b>Overview</b></td><td>The whole project on one page: problem, solution, results and limits.</td></tr>
+   <tr><td><b>Network</b></td><td>The map and the medicines closest to running out. Start here.</td></tr>
+   <tr><td><b>Recommendations</b></td><td>Suggested transfers with the reason, the cost, and days of stock before and after.</td></tr>
+   <tr><td><b>What-if</b></td><td>Pick a disruption and compare the usual way of working with MEDRESQ.</td></tr>
+   <tr><td><b>Savings</b></td><td>Results of 100 simulated runs for each scenario.</td></tr>
+   <tr><td><b>Audit log</b></td><td>A record of every decision the pharmacist made.</td></tr></table></div>
+  <div class="card" style="border-color:var(--amber)"><h3>Please note</h3><p><b>All stock, shortages, transfers and results are simulated.</b> Hospital names mark real places on the map, but no real hospital data was used and none of these hospitals took part. Medicine names are examples. Results show what happens in the simulation under clear assumptions, not in real hospitals.</p></div></div>`;
+}
+/* ---------- overview page ---------- */
+function ico(k){const P={
+ person:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/><path d="M15.5 8.5l1.5 1.5 3-3"/>',
+ gate:'<circle cx="12" cy="12" r="8.5"/><path d="M7 7l10 10"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+ text:'<path d="M5 6h14M5 12h14M5 18h9"/>',
+ log:'<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+ route:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H14a3 3 0 010 6h-4a3 3 0 000 6h5.5"/>'};
+ return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e6b6f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`}
+function art(){const N=[[70,150,24,"#d6382c",.25,1],[170,60,30,"#e8a21a",.6,1],[290,110,22,"#2f8f63",.95,0],[200,185,19,"#e8a21a",.7,0],[40,50,16,"#2f8f63",.9,0]];
+ const E=[[1,0],[3,0],[1,2]];
+ const edges=E.map((e,i)=>{const a=N[e[0]],b=N[e[1]],cx=(a[0]+b[0])/2+(a[1]-b[1])*.18,cy=(a[1]+b[1])/2+(b[0]-a[0])*.18;
+  return `<path id="ap${i}" d="M${a[0]} ${a[1]} Q${cx} ${cy} ${b[0]} ${b[1]}" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2.5" stroke-dasharray="6 6"/><circle r="5.5" fill="#fff"><animateMotion dur="${2.2+i*.5}s" repeatCount="indefinite"><mpath href="#ap${i}"/></animateMotion></circle>`}).join("");
+ const nodes=N.map(n=>{const[x,y,r,c,hl,hosp]=n,rr=r+2.5,len=2*Math.PI*rr;
+  return `<g><circle cx="${x}" cy="${y+3}" r="${r+5}" fill="rgba(0,0,0,.25)"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${rr}" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="5"/><circle cx="${x}" cy="${y}" r="${rr}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${len*hl} ${len}" transform="rotate(-90 ${x} ${y})"/>
+  ${hosp?`<rect x="${x-r*.17}" y="${y-r*.5}" width="${r*.34}" height="${r}" rx="2" fill="${c}"/><rect x="${x-r*.5}" y="${y-r*.17}" width="${r}" height="${r*.34}" rx="2" fill="${c}"/>`:`<text x="${x}" y="${y+r*.3}" text-anchor="middle" font-size="${r*.85}" font-weight="800" fill="${c}" font-family="Segoe UI,system-ui,sans-serif">Rx</text>`}</g>`}).join("");
+ return `<svg class="art" viewBox="0 0 340 230" role="img" aria-label="Network of hospitals and pharmacies with transfers">${edges}${nodes}</svg>`}
+async function overview(){
+  RES=await api("/api/results");let stats="",bnote="";
+  if(RES.summary&&RES.paired){
+    const by={};RES.summary.forEach(r=>{(by[r.scenario]=by[r.scenario]||{})[r.policy[0]]=r});
+    const sc=Object.keys(by),rng=f=>{const v=sc.map(f);return [Math.min(...v),Math.max(...v)]};
+    const cost=RES.paired.filter(x=>x.metric=="total_cost").map(x=>-x.diff_pct),cr=[Math.min(...cost),Math.max(...cost)];
+    const so=rng(k=>100*(1-by[k].C.stockout_days/by[k].A.stockout_days)),ex=rng(k=>100*(1-by[k].C.expiry_loss/by[k].A.expiry_loss));
+    const R=a=>`${fmt(a[0],0)}-${fmt(a[1],0)}%`;const bw=sc.map(k=>100*(by[k].B.total_cost-by[k].A.total_cost)/by[k].A.total_cost);
+    bnote=`<p class="lead" style="margin:0 0 14px"><b>Worth noting:</b> uncoordinated manual transfers (B) cost ${fmt(Math.min(...bw),0)}% to ${fmt(Math.max(...bw),0)}% more than doing nothing (A), because they drain the donor sites. The value comes from coordination and safety checks, not from moving stock alone.</p>`;
+    stats=`<div class="stat3"><div><div class="big">${R(cr)}</div><small>lower total cost than site-by-site ordering, across ${sc.length} simulated scenarios</small></div>
+     <div><div class="big">${R(so)}</div><small>fewer stockout days</small></div><div><div class="big">${R(ex)}</div><small>less value lost to expiry (depends on assumed expiry costs)</small></div></div>
+     <p class="note">Simulation on synthetic data: ${RES.summary[0].runs} runs per scenario, seeds never used for tuning, paired by seed with 95% intervals. Not a result from real hospitals.</p>`}
+  $("#main").innerHTML=`<div class="ov">
+  <div class="ovhero"><div><h1>Spot medicine shortages early. Move the spare stock in time.</h1>
+   <p>MEDRESQ is an AI agent for networks of hospitals and pharmacies. It forecasts shortages, finds where spare stock sits, and proposes transfers. A pharmacist approves every one.</p>
+   <div class="tags"><span>Prototype on synthetic data</span><span>Human in the loop</span><span>Controlled drugs excluded</span></div></div>${art()}</div>
+
+  <section class="ovsec"><h2>The problem</h2><p class="lead">Every center manages its own stock, so the network as a whole has no shared picture. One site runs out while another holds surplus that will expire.</p>
+   <div class="vs"><div class="old"><h3>Today</h3><ul><li>Each site orders alone</li><li>Shortages are found when the shelf is empty</li><li>Help comes from phone calls and memory</li><li>Spare stock expires unseen</li></ul></div>
+   <div class="new"><h3>With MEDRESQ</h3><ul><li>One view across all sites</li><li>Shortages flagged days ahead</li><li>Transfers ranked by cost and benefit</li><li>Expiring stock is moved before it is lost</li></ul></div></div></section>
+
+  <section class="ovsec"><h2>How it works</h2><p class="lead">Four steps, repeated every day. The last one is always a person.</p>
+   <div class="flow"><div><span class="n">1</span><b>Watch</b><p>Reads stock, orders and expiry dates at every site.</p><small>Batch-level stock, record age</small></div>
+   <div><span class="n">2</span><b>Predict</b><p>Forecasts demand and the day each medicine runs out, including sudden surges.</p><small>Shock-aware forecast, adaptive lead time</small></div>
+   <div><span class="n">3</span><b>Recommend</b><p>Finds the cheapest transfers that cover the gaps without hurting the donor.</p><small>Min-cost flow, expected-shortage cost test</small></div>
+   <div><span class="n">4</span><b>Approve</b><p>The pharmacist approves, changes or rejects. Every decision is logged.</p><small>Human approval, audit trail</small></div></div></section>
+
+  <section class="ovsec"><h2>Built to be trusted</h2><p class="lead">A recommendation tool in healthcare has to be careful before it is clever.</p>
+   <div class="feat">
+   <div><div class="ic">${ico("person")}</div><div><b>A person decides</b><span>Nothing moves until a pharmacist approves. They can change the quantity or reject.</span></div></div>
+   <div><div class="ic">${ico("gate")}</div><div><b>It knows when not to answer</b><span>If a stock record is stale, MEDRESQ says "check by hand" instead of guessing.</span></div></div>
+   <div><div class="ic">${ico("lock")}</div><div><b>Hard safety limits</b><span>Donor sites keep a reserve, and transferred stock keeps at least 30 days of shelf life.</span></div></div>
+   <div><div class="ic">${ico("text")}</div><div><b>Plain explanations</b><span>Every reason is filled from the solver's own numbers, never free-written text.</span></div></div>
+   <div><div class="ic">${ico("log")}</div><div><b>Full audit log</b><span>Who decided what, when and why, with a CSV download.</span></div></div>
+   <div><div class="ic">${ico("route")}</div><div><b>Cost-aware</b><span>A transfer is proposed only if the shortage it avoids is worth more than its cost and the donor's risk.</span></div></div></div></section>
+
+  <section class="ovsec"><h2>What the simulation shows</h2><p class="lead">Compared with each site ordering on its own, over two simulated years, 8 sites and 30 medicines.</p>
+   ${stats||'<p class="muted">Run the experiments to see results here.</p>'}
+   <div class="vs" style="grid-template-columns:repeat(3,1fr);margin:16px 0"><div class="old"><h3>A: site by site</h3><span>Each site reorders alone with a reorder-point rule. The baseline.</span></div>
+   <div class="old"><h3>B: manual transfers</h3><span>A, plus rule-of-thumb phone calls to the first site with extra stock.</span></div>
+   <div class="new"><h3>C: MEDRESQ</h3><span>A's ordering, plus shock-aware forecasts, adaptive lead times, optimised transfers, expiry rescue and the safe-to-recommend gate.</span></div></div>
+   ${bnote}
+   <div class="how"><span>7 scenarios: normal, delays, demand spikes, stale records</span><span>Out-of-sample seeds</span><span>Ablation: each component removed in turn</span><span>Cost sensitivity</span><span>28 automated tests</span></div></section>
+
+  <section class="ovsec"><h2>What it does not do yet</h2><p class="lead">Stated plainly, so the numbers are read correctly.</p>
+   <div class="limits"><div><b>No real-world validation</b><span>All data is synthetic. No hospital has used it yet.</span></div>
+   <div><b>Assumed costs</b><span>Prices, expiry cost, transfer cost and shortage penalty are assumptions you can change in one file.</span></div>
+   <div><b>Simplified disruptions</b><span>A shipment delay and a demand spike. No emergency purchasing, no substitutions.</span></div>
+   <div><b>Approval is in the app only</b><span>Real transfers also need each organisation's own legal and regulatory approval.</span></div></div></section>
+
+  <section class="ovsec"><h2>Where it goes next</h2><p class="lead">The prototype exists to find out whether this is worth piloting.</p>
+   <div class="road"><div><b>Listen</b><span>Interview pharmacists and warehouse managers. Replace assumptions with real figures.</span></div>
+   <div><b>Check the rules</b><span>Ask the regulator how inter-site transfers must be approved and recorded.</span></div>
+   <div><b>Pilot read-only</b><span>Connect to one network's stock data and compare recommendations with what staff did.</span></div>
+   <div><b>Measure</b><span>Track real stockouts and expiry before and after, then decide.</span></div></div></section>
+  </div>`;
+}
+async function render(){const mm=$("#main");if(mm){mm.classList.remove("enter");void mm.offsetWidth;}await render0();if(mm){void mm.offsetWidth;mm.classList.add("enter")}helpBox();enhance()}
+async function render0(){
+  setTimeout(()=>{if(tab=="network"||tab=="savings")setTimeout(fillSv,400);setTimeout(()=>countUp(),500)},0);
+  if(tab=="start")return start();if(tab=="overview")return overview();if(tab=="network")return network();if(tab=="centers")return centers();if(tab=="impact")return impact();if(tab=="data")return dataPage();if(tab=="settings")return settingsPage();if(tab=="recs")return recs();if(tab=="whatif")return whatif();
+  if(tab=="savings")return savings();if(tab=="audit")return audit();
+}
+const SCN=["normal","delay","spike","local_delay","local_spike","local_both","stale"];
+const SCNL={normal:"Normal",delay:"Shipment delay, all sites",spike:"Demand spike, all sites",local_delay:"Shipment delay, 3 sites",local_spike:"Demand spike, 3 sites",local_both:"Delay and spike, 3 sites",stale:"Stale records (15%)"};
+let RECS=[],SEL=null;
+async function network(){
+  STATE=await api("/api/state");const n=STATE.network,t=STATE.tiles,sites=mkSites(n);
+  RECS=(await api("/api/recommendations")).items.filter(x=>x.reason_code!="ABSTAIN");
+  const col=v=>v<3?"#d6382c":v<7?"#f08a3c":v<14?"#f4d56e":"#9fd0bf";
+  const riskN=sites.filter(s=>s.status=="risk").length,totalLow=sites.reduce((a,s)=>a+s.low,0);
+  const active=t.day>=n.window[0]&&t.day<=n.window[1]&&n.scenario!="normal",hitN=sites.filter(s=>s.hit).length;
+  const hero=`<div class="hero ${riskN?"bad":""}"><div><h2>${riskN?`${riskN} of ${sites.length} centers are close to running out of medicine`:"All centers are stable today"}</h2>
+   <p>${totalLow?`${totalLow} medicine shortages are expected within 3 days across the network. `:""}${RECS.length?`MEDRESQ found ${RECS.length} transfers that could prevent them.`:"No transfer is needed right now."}</p></div>
+   ${RECS.length?`<button class="btn" onclick="go('recs')">Review ${RECS.length} transfers</button>`:""}</div>`;
+  const banner=n.scenario=="normal"?"":active?`<div class="banner"><span class="pulse"></span>Disruption in progress, days ${n.window[0]} to ${n.window[1]}: ${(n.delay_days||n.spike_pct)?"":"some stock records are out of date"}${n.delay_days?`imported shipments delayed ${n.delay_days} days`:""}${n.delay_days&&n.spike_pct?" and ":""}${n.spike_pct?`demand up ${Math.round(n.spike_pct*100)}%`:""} at ${hitN} centers (dashed ring).</div>`
+   :`<div class="banner calm">A disruption is simulated for days ${n.window[0]} to ${n.window[1]} (now day ${t.day}). Use +7 days to move into it.</div>`;
+  const nm=i=>n.items[i].name||n.items[i].item_id;
+  const head=n.items.map((it,i)=>`<th title="${nm(i)}">${i+1}</th>`).join("");
+  const body=sites.map((s,si)=>`<tr data-s="${s.id}"><th class="rowh" title="${s.name}" onclick="pick('${s.id}')">${s.short}</th>${n.items.map((it,i)=>{const c=n.cover[si][i],a=n.age[si][i];
+    return `<td style="background:${col(c)}" title="${s.name} - ${nm(i)}: ${c} days left, ${n.stock[si][i]} units${a>1?", record "+a+" days old":""}">${a>1?"&bull;":""}</td>`}).join("")}</tr>`).join("");
+  const watch=[];n.cover.forEach((row,si)=>row.forEach((c,i)=>{if(c<3)watch.push({si,i,c,crit:n.items[i].criticality==3?1:0})}));
+  watch.sort((a,b)=>(b.crit-a.crit)||(a.c-b.c));
+  const wcards=watch.slice(0,8).map(w=>`<button class="wc" onclick="pick('${sites[w.si].id}');window.scrollTo({top:0,behavior:'smooth'})"><span><svg class="cap" viewBox="0 0 20 20"><g transform="rotate(-40 10 10)"><rect x="1" y="6" width="18" height="8" rx="4" fill="#fff" stroke="#0e6b6f" stroke-width="1.4"/><path d="M10 6h5a4 4 0 010 8h-5z" fill="#d6382c"/></g></svg><b>${nm(w.i)}</b>${w.crit?'<span class="crit">critical</span>':""}</span><small>${sites[w.si].name}</small><div class="meter"><i style="width:${Math.max(4,w.c/3*100)}%"></i></div><strong>${w.c<0.05?"Out of stock":fmt(w.c,1)+" days left"}</strong></button>`).join("");
+  $("#main").innerHTML=hero+banner+`<div id="sv"></div><div class="mapwrap"><div id="map"></div><div class="drawer" id="drawer"></div>
+   <div class="maplegend"><span><i style="background:#d6382c"></i>At risk <small>4+ medicines under 3 days</small></span><span><i style="background:#e8a21a"></i>Watch <small>1 to 3</small></span><span><i style="background:#2f8f63"></i>Stable</span><span><i style="background:#fff;outline:2px dashed #e8a21a;outline-offset:1px"></i>Hit by disruption</span></div></div>`
+   +`<p class="note" style="margin:-8px 0 14px"><button class="btn alt" id="tbtn" style="padding:4px 12px;margin-inline-end:8px" onclick="toggleTiles()">${tilesOff()?"Show street map":"Plain map"}</button>Hospital names mark real locations on the map (positions are approximate). All stock, shortages and transfers are simulated. No real hospital data was used.</p>`+tilesHTML(t)+
+   `<h3 class="sect">Medicines closest to running out</h3><p class="sub">"Days left" means how long today's stock lasts at the recent pace of demand. Critical medicines are the ones where a gap harms patients most.</p>
+   ${watch.length?`<div class="wgrid">${wcards}</div>`:`<p class="muted">No medicine is under 3 days of stock anywhere.</p>`}
+   <div class="bar" style="margin-top:18px"><b>Try another situation</b><label>Scenario <select id="scn">${SCN.map(s=>`<option value="${s}" ${s==n.scenario?"selected":""}>${SCNL[s]}</option>`).join("")}</select></label>
+    <label>Seed <input id="seed" type="number" value="${n.seed}" style="width:80px"></label><button class="btn alt" onclick="reset()">Reset</button></div>
+   <details class="card"><summary>Advanced: every medicine at every center</summary><p class="sub">Each square is one medicine at one center. Hover for details.</p>
+   <div class="heat"><table><tr><th></th>${head}</tr>${body}</table></div>
+   <p class="legend"><span><i style="background:#d6382c"></i>under 3 days</span><span><i style="background:#f08a3c"></i>under 7</span><span><i style="background:#f4d56e"></i>under 14</span><span><i style="background:#9fd0bf"></i>14 or more</span><span>&bull; stock record is stale</span></p></details>`;
+  MAP=new GMap($("#map"),{onSelect:id=>pick(id)});MAP.setSites(sites);
+  const SHP=(await api("/api/shipments")).filter(x=>x.status!="delivered");MAP.setTransfers(RECS.filter(r=>r.status=="pending").map(x=>({id:x.id,src:x.src,dst:x.dst,qty:x.qty})).concat(SHP.map(x=>({id:"s"+x.id,src:x.src,dst:x.dst,qty:x.qty,ship:1,k:(x.today-x.sent_day)/Math.max(1,x.arrive_day-x.sent_day),arrive:x.arrive_day}))));
+  window.pick=id=>{SEL=id;MAP.select(id);drawer(id,sites,n);document.querySelectorAll(".heat tr[data-s]").forEach(r=>r.classList.toggle("sel",r.dataset.s==id))};
+  MAP.fit(window.innerWidth>900?310:0);
+  pick(SEL&&sites.find(s=>s.id==SEL)?SEL:[...sites].sort((a,b)=>b.low-a.low)[0].id);
+}
+function drawer(id,sites,n){const s=sites.find(x=>x.id==id),si=s.idx,nm=i=>n.items[i].name||n.items[i].item_id;
+  const low=n.items.map((it,i)=>({i,it,c:n.cover[si][i],a:n.age[si][i]})).filter(o=>o.c<3).sort((x,y)=>(y.it.criticality==3)-(x.it.criticality==3)||x.c-y.c);
+  const stale=n.age[si].filter(a=>a>1).length,sug=RECS.filter(r=>r.dst==id),out=RECS.filter(r=>r.src==id);
+  $("#drawer").innerHTML=`<span class="badge ${s.status}">${STAT[s.status][1]}</span><h3>${s.name}</h3><div class="muted">${KIND(s)} &middot; simulated stock</div>
+  <p style="margin:10px 0 0">${s.low?`<b>${s.low}</b> medicines will run out within 3 days.`:"No medicine is close to running out."}${s.hit?" This center is hit by the disruption.":""}</p>
+  <div class="kv"><div><small>Stock value</small><b>${fmt(s.value)} JD</b></div><div><small>Stale records</small><b>${stale}</b></div></div>
+  ${sug.length?`<h4>MEDRESQ suggests</h4><ul class="sug">${sug.map(r=>`<li>Receive <b>${r.qty}</b> units of ${r.item_name} from ${r.src_name}</li>`).join("")}</ul><button class="btn" style="margin-top:6px" onclick="go('recs')">Review</button>`:""}
+  <button class="btn alt" style="margin-top:8px" onclick="CUR='${id}';go('centers')">Open this center's workspace</button>
+  ${out.length?`<h4>Can spare</h4><ul class="sug">${out.map(r=>`<li><b>${r.qty}</b> units of ${r.item_name} to ${r.dst_name}</li>`).join("")}</ul>`:""}
+  ${low.length?`<h4>Running out</h4><ul class="need">${low.slice(0,8).map(o=>`<li><span>${nm(o.i)}${o.it.criticality==3?'<span class="crit">critical</span>':""}</span><b>${o.c<0.05?"out":fmt(o.c,1)+" d"}</b></li>`).join("")}</ul>${low.length>8?`<p class="note">and ${low.length-8} more</p>`:""}`:""}
+  <p class="note" style="margin-top:12px">Stock is simulated. Location is approximate.</p>`}
+async function reset(){await api("/api/reset",{scenario:$("#scn").value,seed:+$("#seed").value});network()}
+async function adv(d){await api("/api/advance",{days:d});render()}
+async function recs(){
+  const r=await api("/api/recommendations"),st=await api("/api/state");
+  const list=r.items.length?r.items.map(recCard).join(""):`<p class="muted">No recommendations today. MEDRESQ only proposes a transfer when the expected benefit clearly exceeds its cost and the donor's own risk.</p>`;
+  $("#main").innerHTML=`<h2 class="page">${r.items.filter(x=>x.reason_code!="ABSTAIN"&&x.status=="pending").length} suggested transfers today (day ${r.day})</h2><p class="lede">Each card moves spare medicine to a center that is about to run out. You approve, change the quantity or reject. Nothing moves without you, and every decision is logged.</p>`+tilesHTML(st.tiles)+`<div class="mapwrap short"><div id="map"></div></div>`+list;
+  const sites=mkSites(st.network);MAP=new GMap($("#map"),{});MAP.setSites(sites);MAP.setTransfers(r.items.filter(x=>x.reason_code!="ABSTAIN"&&x.status=="pending").map(x=>({id:x.id,src:x.src,dst:x.dst,qty:x.qty})));MAP.fit(0,100,0);
+}
+function imp(l,b,a){const P=v=>Math.min(v,21)/21*100,lo=Math.min(b,a),hi=Math.max(b,a);
+  return `<div class="imp"><span>${l}</span><div class="track"><i class="b" style="width:${P(lo)}%"></i><i class="${a>b?"up":"down"}" style="left:${P(lo)}%;width:${P(hi)-P(lo)}%"></i></div><b>${fmt(b,1)} &rarr; ${fmt(a,1)} days</b></div>`}
+function nice(r,t){return r.item_name?String(t).split(r.item).join(r.item_name):t}
+function recCard(r){
+  if(r.reason_code=="ABSTAIN")return `<div class="stop"><h4>${r.item_name||r.item} at ${r.dst_name}: check by hand</h4><div>${nice(r,r.reason)}</div><div class="chips"><span class="chip warn">The stock record is too old to recommend safely</span></div><div class="muted">${r.alternative}</div></div>`;
+  const c=r.constraints,v=r.cover||{},done=r.status!="pending"||(ME&&ME.role!="coordinator");
+  return `<div class="slip ${done?"done":""}" onmouseenter="MAP&&MAP.hl(${r.id})" onmouseleave="MAP&&MAP.hl(null)"><div class="route"><div class="node"><b>${r.src_name}</b><small>sends</small></div>
+  <div class="pipe"><i></i><span class="qty">${r.qty}</span><small>units</small><i></i></div><div class="node"><b>${r.dst_name}</b><small>receives</small></div></div>
+  <div class="body"><h4>Send ${r.qty} units of ${r.item_name} from ${r.src_name} to ${r.dst_name} ${done?`<span class="chip">${r.status}</span>`:""}</h4>
+  ${r.cover?`<div class="why">${r.dst_name} would run out in <b>${fmt(v.dst_before,1)} days</b>.<span> After this transfer it lasts </span><b class="g">${fmt(v.dst_after,1)} days</b>.</div>`:""}
+  <div class="fig"><div><small>Shortage avoided</small><b>${fmt(r.avoided_shortage_value_jd,2)} JD</b></div><div><small>Transfer cost</small><b>${fmt(r.cost_jd,2)} JD</b></div><div><small>Risk to ${r.src_name}</small><b>${fmt(r.donor_risk_jd||0,2)} JD</b></div>${r.net_benefit_jd!=null?`<div><small>Net benefit</small><b class="net">${fmt(r.net_benefit_jd,2)} JD</b></div>`:""}</div>
+  ${r.cover?`<div style="margin-top:8px">${imp(r.dst_name+" days left",v.dst_before,v.dst_after)}${imp(r.src_name+" days left",v.src_before,v.src_after)}<div class="note">Before and after, at today's demand and with no new deliveries.</div></div>`:""}
+  <div class="chips"><span class="chip">${r.src_name} keeps ${c.donor_keeps_reserve_days} days of stock</span><span class="chip">At least ${c.min_shelf_days_on_arrival} days of shelf life on arrival</span></div>
+  <div class="small-d"><b>Why:</b> ${nice(r,r.reason)}<br>${r.alternative?"Alternative: "+nice(r,r.alternative):""}</div>
+  ${done?"":`<div class="acts"><button class="btn ok" onclick="decide(${r.id},'approve')">Approve</button><button class="btn no" onclick="decide(${r.id},'reject')">Reject</button>
+  <input id="q${r.id}" type="number" min="1" value="${r.qty}" style="width:80px" aria-label="Quantity"><button class="btn alt" onclick="decide(${r.id},'override')">Send this quantity</button>
+  <input id="n${r.id}" placeholder="Reason (optional)" style="flex:1;min-width:140px"></div>`}</div></div>`;
+}
+async function decide(id,action){
+  const q=$("#q"+id),n=$("#n"+id);
+  const r=await api("/api/decision",{id,action,qty:q?+q.value:null,note:n?n.value:"",role:"Pharmacist"});
+  if(r.error)alert(r.error);recs();
+}
+async function whatif(){
+  $("#main").innerHTML=`<h2 class="page">What-if</h2><div class="card"><h3>Stress-test a disruption</h3><p class="note">Stress-test the same network under a disruption before acting. Runs one year with the same random demand for both plans, so the difference is the plan, not luck. All numbers are simulated.</p>
+  <div class="row"><div>
+  ${sl("delay","Shipment delay (days)",0,28,21)}${sl("spike","Demand spike (%)",0,100,100)}${sl("length","Duration (days)",7,28,18)}${sl("share","Sites affected (%)",12,100,38)}${sl("stale","Stale records (%)",0,40,0)}${sl("seed","Seed",1,20,3)}
+  <button class="btn" id="runw" onclick="runWhatif()">Run what-if</button></div><div id="wout" class="muted">Choose a disruption and run it.</div></div></div>`;
+  document.querySelectorAll("input[type=range]").forEach(i=>i.oninput=()=>$("#v_"+i.id).textContent=i.value);
+}
+const sl=(id,l,a,b,v)=>`<div class="sl"><label for="${id}">${l}</label><input type="range" id="${id}" min="${a}" max="${b}" value="${v}"><b id="v_${id}">${v}</b></div>`;
+
+function wiCards(A,C){const mx=(a,c)=>Math.max(a,c,1),pc=(a,c)=>a?100*(a-c)/a:0;
+  const card=(t,a,c,txt,u)=>{const m=mx(a,c);return `<div class="wi"><small>${t}</small><div class="wb"><span>Site by site</span><div><i class="a" style="width:${a/m*100}%"></i></div><b>${fmt(a)}${u}</b></div><div class="wb"><span>MEDRESQ</span><div><i class="c" style="width:${c/m*100}%"></i></div><b>${fmt(c)}${u}</b></div><p>${txt}</p></div>`};
+  const so=pc(A.stockout_days,C.stockout_days),co=pc(A.total_cost,C.total_cost),ex=pc(A.expiry_loss,C.expiry_loss);
+  return `<h3 style="margin-top:16px">What this means</h3><div class="wis">
+   ${card("Stockout days",A.stockout_days,C.stockout_days,so>0.5?`Stockout days fall from ${fmt(A.stockout_days)} to ${fmt(C.stockout_days)}, which is ${fmt(so,0)}% fewer.`:"Stockout days do not improve in this run.","")}
+   ${card("Total cost",A.total_cost,C.total_cost,co>0.5?`Total cost falls by ${fmt(A.total_cost-C.total_cost)} JD, a saving of ${fmt(co,0)}%.`:`Total cost does not fall in this run.`," JD")}
+   ${card("Expiry loss",A.expiry_loss,C.expiry_loss,ex>0.5?`Less stock expires: ${fmt(A.expiry_loss)} JD becomes ${fmt(C.expiry_loss)} JD.`:"Expiry loss stays about the same."," JD")}</div>`}
+async function runWhatif(){
+  $("#runw").disabled=true;$("#wout").innerHTML="Running two simulations (about 3 seconds)...";
+  const r=await api("/api/whatif",{delay:+$("#delay").value,spike:$("#spike").value/100,length:+$("#length").value,share:$("#share").value/100,stale:$("#stale").value/100,seed:+$("#seed").value});
+  $("#runw").disabled=false;const A=r.A.metrics,C=r.C.metrics;
+  const row=(l,k,d=0,lower=true)=>{const a=A[k],c=C[k],df=c-a,p=a?100*df/a:0;const good=lower?df<0:df>0;
+   return `<tr><td>${l}</td><td class="n">${fmt(a,d)}</td><td class="n">${fmt(c,d)}</td><td class="n ${Math.abs(p)<0.5?"":good?"good":"bad"}">${p>0?"+":""}${fmt(p,1)}%</td></tr>`};
+  $("#wout").innerHTML=`<table><tr><th>Metric (simulated)</th><th class="n">Site by site</th><th class="n">MEDRESQ</th><th class="n">Change</th></tr>
+  ${row("Stockout days","stockout_days")}${row("Expiry loss (JD)","expiry_loss")}${row("Shortage penalty (JD)","shortage_penalty")}${row("Transfer cost (JD)","transfer_cost")}${row("Total cost (JD)","total_cost")}
+  <tr><td>Transfers (if all approved)</td><td class="n">0</td><td class="n">${C.n_transfers}</td><td></td></tr><tr><td>Abstentions (manual review)</td><td class="n">0</td><td class="n">${fmt(C.abstentions)}</td><td></td></tr></table>
+  ${wiCards(A,C)}
+  <h3 style="margin-top:14px">Stockout days per week</h3>${lines(r.A.stockouts_weekly,r.C.stockouts_weekly,r.A.window)}
+  <p class="note">One seed only: read it as an illustration of the mechanism. The Savings tab has 100-run results with confidence intervals.</p>`;
+}
+function lines(a,b,win){const W=560,H=180,m=30,mx=Math.max(...a,...b,1),n=a.length;
+ const P=(arr,c)=>`<polyline fill="none" stroke="${c}" stroke-width="2" points="${arr.map((v,i)=>`${m+i*(W-m-6)/(n-1)},${H-18-(v/mx)*(H-30)}`).join(" ")}"/>`;
+ const x0=m+win[0]/7*(W-m-6)/(n-1),x1=m+win[1]/7*(W-m-6)/(n-1);
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%"><rect x="${x0}" y="6" width="${x1-x0}" height="${H-24}" fill="#e07a1f" opacity=".12"/>
+ <line x1="${m}" y1="${H-18}" x2="${W-6}" y2="${H-18}" stroke="#999"/>${P(a,"#8d99ae")}${P(b,"#13a89e")}
+ <text x="${m}" y="12" font-size="10" fill="#888">${mx}</text><text x="${W-150}" y="${H-3}" font-size="10" fill="#888">weeks (shaded = disruption)</text>
+ <text x="${m+8}" y="24" font-size="11" fill="#8d99ae">&#9644; site by site</text><text x="${m+90}" y="24" font-size="11" fill="#13a89e">&#9644; MEDRESQ</text></svg>`}
+
+async function fillSv(){const el=$("#sv");if(!el)return;
+ try{const L=await api("/api/live_savings");if(!RES)RES=await api("/api/results");
+  const P=(RES&&RES.paired||[]).filter(x=>x.metric=="total_cost"),v=P.map(x=>-x.diff_pct),lo=v.length?Math.min(...v):0,hi=v.length?Math.max(...v):0,mid=v.length?v.reduce((a,b)=>a+b,0)/v.length:0;
+  el.innerHTML=`<div class="svbox"><div class="svc"><small>Expected saving</small><b>about ${fmt(mid,0)}%</b><span>lower total cost than working site by site (${fmt(lo,0)}% to ${fmt(hi,0)}% across scenarios, simulated)</span></div><div class="svc"><small>Saved so far in this session</small><b>${fmt(L.net_jd,0)} JD</b><span>${L.approved?`estimated net benefit of ${L.approved} approved transfer(s): avoided shortage ${fmt(L.avoided_jd,0)} JD minus transfer cost ${fmt(L.cost_jd,0)} JD`:"Approve a transfer in Recommendations and its estimated benefit appears here."}</span></div><p class="svnote">Simulated and based on assumed prices. Not a measured saving in a real hospital.</p></div>`;countUp(el)}catch(e){}}
+
+
+/* ---------- sign in, roles, notifications ---------- */
+const ROLE_NAME={coordinator:"Network coordinator",reviewer:"Reviewer (read only)",manager:"Center manager"};
+let LU=false,NSEEN=0,NTIMER=null;
+async function showLogin(){
+  if(LU)return;LU=true;const AC=await fetch("/api/accounts").then(r=>r.json()),acc=AC.accounts;
+  const card=a=>`<button class="lc" onclick="pickU('${a.user}')" data-u="${a.user}"><span class="mini ${a.role}">${a.role=="manager"?(a.name.includes("Pharmacy")?"Rx":"+"):a.role=="coordinator"?"&#9881;":"&#128065;"}</span><b>${a.role=="manager"?a.name.replace("Manager, ",""):a.name}</b><small>${ROLE_NAME[a.role]}</small></button>`;
+  $("#login").innerHTML=`<div class="lbox"><div class="lhead"><h1>MEDRESQ</h1><p>Choose who you are. Each center manager can act only for their own center.</p></div>
+   <div class="lgrid">${acc.map(card).join("")}</div>
+   <form class="lform" onsubmit="doLogin(event)"><label>Signed in as<input id="lu" readonly placeholder="Choose an account above"></label><label>Password<input id="lp" type="password" value="${AC.easy?"demo":""}" autocomplete="off"></label><button class="btn" type="submit">Sign in</button></form>
+   <p class="note" id="lerr" style="color:#d6382c;min-height:18px"></p><p class="note">${AC.easy?"Demo accounts only. The password is \"demo\" for all of them. A real deployment would use proper authentication.":"Each account has its own password. They are in PASSWORDS.txt next to the app, created the first time it ran."}</p></div>`;
+  $("#login").className="on";
+}
+function pickU(u){$("#lu").value=u;document.querySelectorAll(".lc").forEach(b=>b.classList.toggle("on",b.dataset.u==u))}
+async function doLogin(e){e.preventDefault();const u=$("#lu").value;if(!u){$("#lerr").textContent="Choose an account above";return}
+  const r=await api("/api/login",{user:u,password:$("#lp").value});if(r.error){$("#lerr").textContent=r.error;return}
+  $("#login").className="";$("#login").innerHTML="";LU=false;ME=r;tab=ME.role=="manager"?"centers":"start";if(ME.role=="manager")CUR=ME.site;setupUser();nav();render();setTimeout(welcome,900)}
+async function logout(){await api("/api/logout",{});ME=null;CUR=null;clearInterval(NTIMER);$("#me").innerHTML="";LU=false;showLogin()}
+function setupUser(){
+  const m=ME,isM=m.role=="manager",co=m.role=="coordinator";
+  $("#me").innerHTML=`<div class="who"><span class="avs">${m.name.replace("Manager, ","").replace("Network ","").slice(0,1)}</span><div><b>${m.name.replace("Manager, ","")}</b><small>${ROLE_NAME[m.role]}</small></div>${isM?`<button class="bell" id="bell" onclick="toggleBell()" aria-label="Notifications"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V11a6 6 0 0112 0v6l1.5 2h-15z"/><path d="M10 21a2 2 0 004 0"/></svg><i id="bn"></i></button>`:""}</div><div class="so2"><button class="so" onclick="logout()">Sign out</button>${isM?`<button class="so" id="snd" onclick="toggleSound()">${(()=>{try{return localStorage.getItem("medresq_sound")=="off"?"Sound on":"Sound off"}catch(e){return "Sound off"}})()}</button>`:""}</div>`;
+  $("#go").style.display=co?"":"none";$("#tourbtn").style.display=co?"":"none";$("#pitchbtn").style.display=co?"":"none";
+  clearInterval(NTIMER);if(isM){NSEEN=0;pollNotes(true);NTIMER=setInterval(pollNotes,5000)}
+}
+async function pollNotes(first){if(!ME||ME.role!="manager")return;
+  let r;try{r=await api("/api/notifications")}catch(e){return}
+  const bn=$("#bn");if(bn){bn.textContent=r.unread||"";bn.style.display=r.unread?"grid":"none"}
+  const top=r.items.length?r.items[0].id:0;
+  if(!first&&top>NSEEN){const fresh=r.items.filter(n=>n.id>NSEEN&&!n.read);if(fresh.length){toast(fresh[0].text);ping();const b=$("#bell");if(b){b.classList.remove("ring");void b.offsetWidth;b.classList.add("ring")}if(tab=="centers")centers()}}
+  NSEEN=Math.max(NSEEN,top);window.__notes=r.items}
+const NI={suggest:"&#9672;",asked:"&#8681;",offered:"&#8679;",confirmed:"&#10003;",declined:"&#10005;",shipped:"&#10148;",delivered:"&#9873;"};
+async function toggleBell(){const p=$("#bellp");if(p.className=="on"){p.className="";return}
+  const r=await api("/api/notifications");const it=r.items;
+  p.innerHTML=`<div class="bhead"><b>Notifications</b><button onclick="$('#bellp').className=''">&times;</button></div>${it.length?it.map(n=>`<button class="nit ${n.read?"":"new"} k-${n.kind}" onclick="$('#bellp').className='';go('centers')"><span class="ni">${NI[n.kind]||"&bull;"}</span><span class="nt">${esc(n.text)}</span><small>day ${n.day} &middot; ${n.time}</small></button>`).join(""):`<p class="muted" style="padding:14px">No notifications yet.</p>`}`;
+  p.className="on";await api("/api/notifications/read",{site:r.site});const bn=$("#bn");if(bn)bn.style.display="none"}
+
+const DETAILS={"Watches": ["MEDRESQ reads each center's stock every day: units per batch with expiry dates, orders on the way, and how old each stock record is. No patient data is used.", "A pharmacy holds 2 packs of a heart medicine and its next supplier delivery is 7 days away."], "Predicts": ["It forecasts daily demand from recent history and reacts fast when demand suddenly jumps. Then it counts how many days the stock lasts, using that medicine's real delivery delay.", "If demand doubles in three centers, the days of stock shrink much faster than a plain average would show."], "Recommends": ["It looks for centers with spare stock and picks the transfer that costs least. The sender must keep a safe reserve, and the shortage avoided must be worth more than the move.", "Each card shows the shortage avoided, the transfer cost and the net benefit in JD."], "The pharmacist decides": ["Every proposal is only a suggestion. The receiving center asks, the sending center confirms, and the transfer ships only when both agree. Everything is written to the audit log.", ""], "Watch": ["Inputs are stock per batch, orders in transit, expiry dates and the age of each record. Nothing about patients is needed.", ""], "Predict": ["The forecast is a shock-aware moving average. A gradient-boosting model scored slightly lower error in our tests, but the simple one was kept because it reacts to surges and can be explained to a pharmacist.", ""], "Recommend": ["The best transfers are found as a minimum-cost flow. A transfer is proposed only if its benefit is at least twice its cost plus the risk to the sender.", ""], "Approve": ["Center managers answer only for their own center. The coordinator can override, and a reviewer can only read. Every action is logged with time, role and reason.", ""], "A person decides": ["A suggestion never moves stock by itself. Both centers must confirm, and the coordinator can step in.", ""], "It knows when not to answer": ["If a stock record is too old, the app shows \"check by hand\" and asks for a count instead of recommending on bad data.", ""], "Hard safety limits": ["The sender keeps a reserve of days of stock, and transferred stock needs at least 30 days of shelf life. Controlled medicines can be excluded, and cold-chain medicines need a confirmation of cold transport.", ""], "Plain explanations": ["Each reason is a sentence template filled with the solver's own numbers, so it cannot invent facts.", ""], "Full audit log": ["Every request, confirmation, refusal and shipment is recorded with time, role and note, and can be exported as CSV or a PDF report.", ""], "Cost-aware": ["A transfer costs money and can leave the sender short. MEDRESQ weighs the shortage avoided against both before it suggests anything.", ""], "No real-world validation": ["The numbers come from a simulation on invented data. They show how the method behaves, not what a real hospital would save.", "Next step: replace assumptions with figures from pharmacist interviews, then test on read-only data."], "Assumed costs": ["Prices, expiry cost, transfer cost and shortage penalty are assumptions. In Settings you can change them and see the saving change.", ""], "Simplified disruptions": ["The model has only two shocks: late shipments and a demand jump. Real life also has emergency buying, substitutions and recalls.", ""], "Approval is in the app only": ["Real transfers also need each organisation's legal and regulatory approval. The app records agreement, it does not replace the rules.", ""], "Listen": ["Interview pharmacists and warehouse managers and replace the assumed numbers with real ones.", "Ask: how often do you run out, what expires unused, and how do you arrange a transfer today?"], "Check the rules": ["Ask the regulator how transfers between sites must be approved and recorded, and which medicines are never allowed to move.", ""], "Pilot read-only": ["Connect to one network's stock data, show recommendations, and compare them with what staff actually did. No transfers are triggered.", ""], "Measure": ["Track real stockouts and expired stock before and after, then decide whether it is worth a full pilot.", ""]};
+
+function enhance(){
+  document.querySelectorAll(".steps4>div,.flow>div,.feat>div,.limits>div,.road>div").forEach(el=>{
+    const b=el.querySelector("b"),k=b&&b.textContent.trim(),d=DETAILS[k];if(!d||el.dataset.xp)return;el.dataset.xp=1;
+    el.classList.add("xp");el.tabIndex=0;el.setAttribute("role","button");el.setAttribute("aria-expanded","false");
+    const ch=document.createElement("i");ch.className="chev";ch.textContent="+";el.appendChild(ch);
+    const p=document.createElement("div");p.className="xd";p.innerHTML=`<div><p>${d[0]}</p>${d[1]?`<p class="ex"><b>Example</b><span>${d[1]}</span></p>`:""}</div>`;el.appendChild(p);
+    const t=()=>{const o=el.classList.toggle("open");el.setAttribute("aria-expanded",o);ch.textContent=o?"−":"+"};
+    el.addEventListener("click",ev=>{if(ev.target.closest(".xd"))return;t()});el.addEventListener("keydown",ev=>{if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();t()}});
+  })}
+
+
+const HELP={"start": ["This is the project introduction. Click any card to open more detail.", "Read the idea, then press “Open the map” to see the product."], "overview": ["How MEDRESQ works, what it cannot do yet, and the next steps.", "Click any card to open an explanation and an example."], "impact": ["How the idea turns into results, and which real numbers are still missing.", "If you have a real figure, type it with its source. Leave it empty if you do not know."], "network": ["A map of the 8 centers. Red means a center is about to run out of medicine.", "Click a pin to see its details and the suggested transfer, then press “Review”."], "centers": ["Each center has its own page. The top shows requests waiting for that center.", "Press “Confirm” or “Decline” on a request. Use “Ask for more” on a medicine you are short of."], "recs": ["The transfers MEDRESQ suggests today, with the estimated saving for each.", "Press “Approve”, “Reject”, or change the quantity first."], "whatif": ["Test a different situation, like a shipment delay, and see how many shortages appear.", "Pick a situation and run it. Nothing here changes the real demo."], "savings": ["How much cheaper MEDRESQ is than working site by site, from 100 simulated runs.", "Just read it. These are simulated numbers, not real ones."], "data": ["Upload a stock table (CSV) from one pharmacy or hospital.", "Download the template, fill it in, and upload it to see what is running out."], "settings": ["Change the assumed prices and costs to see how the saving changes.", "For advanced use. You can skip this page safely."], "audit": ["A record of every decision: who, what and when.", "Download it as CSV, or download the PDF report."]};
+function helpGone(k){try{return localStorage.getItem("medresq_help_"+k)=="x"}catch(e){return false}}
+function helpBox(){const k=tab,h=HELP[k],m=$("#main");if(!h||!m||helpGone(k)||m.querySelector(".howto"))return;
+  const d=document.createElement("div");d.className="howto";d.innerHTML=`<i>?</i><div><b>What is this page?</b><p>${h[0]}</p><b>What should I do?</b><p>${h[1]}</p></div><button aria-label="Hide" onclick="helpHide('${k}')">Got it</button>`;m.prepend(d);if(window.__retr)window.__retr(d)}
+function helpHide(k){try{localStorage.setItem("medresq_help_"+k,"x")}catch(e){}const e=$(".howto");if(e){e.classList.add("gone");setTimeout(()=>e.remove(),300)}}
+function helpAgain(){try{Object.keys(HELP).forEach(k=>localStorage.removeItem("medresq_help_"+k))}catch(e){}document.querySelectorAll(".howto").forEach(x=>x.remove());helpBox();window.scrollTo({top:0,behavior:"smooth"})}
+function welcome(){let seen=false;try{seen=localStorage.getItem("medresq_welcome")=="1"}catch(e){}if(seen||!ME)return;
+  const o=document.createElement("div");o.id="welcome";const co=ME.role=="coordinator";
+  o.innerHTML=`<div class="wbox"><h2>Welcome to MEDRESQ</h2><p>MEDRESQ warns you before a medicine runs out, and suggests which center can help. All data here is simulated.</p><ol><li>Open the Network tab to see the map.</li><li>Click a red pin to see who is running out.</li><li>Press Review to see the suggested transfer.</li></ol><p class="muted">On every page, a blue help box explains what to do. You can hide it with “Got it”.</p><div class="bar">${co?`<button class="btn" onclick="welcomeClose();tourStart()">Start the guided demo</button>`:""}<button class="btn alt" onclick="welcomeClose()">I will explore myself</button></div></div>`;document.body.appendChild(o)}
+function welcomeClose(){try{localStorage.setItem("medresq_welcome","1")}catch(e){}const o=$("#welcome");if(o)o.remove()}
+/* ---------- sound and vibration for new notifications ---------- */
+function ping(){try{if(localStorage.getItem("medresq_sound")=="off")return}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([120,60,120])}catch(e){}
+  try{const A=window.AudioContext||window.webkitAudioContext,c=new A(),o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.18,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.35);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.4)}catch(e){}}
+function toggleSound(){let off=false;try{off=localStorage.getItem("medresq_sound")=="off";localStorage.setItem("medresq_sound",off?"on":"off")}catch(e){}
+  const b=$("#snd");if(b)b.textContent=off?"Sound on":"Sound off";if(off)ping()}
+/* ---------- settings ---------- */
+async function settingsPage(){
+  const S=await api("/api/settings"),R=await api("/api/rules");
+  $("#main").innerHTML=`<h2 class="page">Settings</h2><p class="lede">Change the assumed prices and costs, then see how the saving changes. When you have real figures from interviews, type them here. Everything stays simulated.</p>
+  <div class="card"><h3>Prices and costs</h3><div class="setg">${S.fields.map(f=>`<label class="sf"><span>${esc(f.label)}</span><input type="number" id="st_${f.key}" min="${f.min}" max="${f.max}" step="${f.step}" value="${S.values[f.key]}"><small>Example value: ${S.defaults[f.key]}</small></label>`).join("")}</div>
+   <div class="bar" style="margin-top:14px"><label>Test on <select id="st_sc">${SCN.map(x=>`<option value="${x}" ${x=="local_both"?"selected":""}>${SCNL[x]}</option>`).join("")}</select></label><label>Seed <input id="st_seed" type="number" min="1" max="20" value="3" style="width:70px"></label>
+   <button class="btn" id="st_run" onclick="settingsRun()">Recalculate saving</button><button class="btn alt" onclick="settingsApply()">Apply to the live demo</button><button class="btn alt" onclick="realPrices()">Use pricier medicines (x2)</button><button class="btn alt" onclick="settingsReset()">Back to example numbers</button></div>
+   <div id="st_out" class="muted" style="margin-top:12px">Press "Recalculate saving" to compare site by site with MEDRESQ using your numbers (about 10 seconds).</div></div>
+  <div class="card"><h3>Safety rules</h3><p class="sub">Controlled medicines are never proposed and cannot be requested. Cold-chain medicines need the sender to confirm cold transport before sending.</p>
+   <div class="stk" style="max-height:340px"><table><tr><th>Medicine</th><th>Controlled (never transfer)</th><th>Cold chain (confirm transport)</th></tr>${R.items.map(n=>`<tr><td>${esc(n)}</td><td><input type="checkbox" class="rc" data-n="${esc(n)}" ${R.controlled.includes(n)?"checked":""}></td><td><input type="checkbox" class="rk" data-n="${esc(n)}" ${R.cold.includes(n)?"checked":""}></td></tr>`).join("")}</table></div>
+   <button class="btn" style="margin-top:12px" onclick="saveRules()">Save rules</button></div>`;
+}
+function stVals(){const v={};document.querySelectorAll("[id^=st_]").forEach(i=>{if(i.type=="number"&&i.id!="st_seed")v[i.id.slice(3)]=+i.value});return v}
+async function settingsRun(){const b=$("#st_run");b.disabled=true;$("#st_out").textContent="Running four simulations (about 10 seconds)...";
+  const r=await api("/api/settings/compare",{scenario:$("#st_sc").value,seed:+$("#st_seed").value,values:stVals()});b.disabled=false;
+  if(r.error){$("#st_out").textContent=r.error;return}
+  const card=(t,x,c)=>`<div class="wi ${c}"><small>${t}</small><div class="bigs">${fmt(x.saving_pct,1)}%</div><p>${x.saving_jd>=0?`MEDRESQ costs ${fmt(x.saving_jd)} JD less over one simulated year.`:`MEDRESQ costs ${fmt(-x.saving_jd)} JD more over one simulated year.`}</p><p class="muted">Stockout days ${fmt(x.A.stockouts)} to ${fmt(x.C.stockouts)}. Transfers ${fmt(x.C.transfers)}.</p></div>`;
+  $("#st_out").innerHTML=`<div class="wis">${card("With your numbers",r.mine,"mine")}${card("With the example numbers",r.example,"")}</div><p class="note">One simulated year and one seed. The Savings tab has the 100-run results with the example numbers.</p>`}
+function realPrices(){const i=$("#st_price_scale");if(i){i.value=2;toast("Prices set to x2. Press Recalculate saving, or Apply to the live demo.")}}
+async function settingsApply(){const r=await api("/api/settings",{values:stVals()});if(r.error){toast(r.error,false);return}toast("Applied. The live demo was restarted with your numbers.")}
+async function settingsReset(){await api("/api/settings",{reset:true});toast("Back to the example numbers.");settingsPage()}
+async function saveRules(){const g=c=>[...document.querySelectorAll("."+c+":checked")].map(i=>i.dataset.n);const r=await api("/api/rules",{controlled:g("rc"),cold:g("rk")});if(r.error)toast(r.error,false);else toast("Rules saved.")}
+/* ---------- your own data ---------- */
+async function dataPage(){
+  $("#main").innerHTML=`<h2 class="page">Your data</h2><p class="lede">Upload a stock table from one pharmacy or hospital and see which medicines are about to run out and where spare stock sits. This is a quick preview with simple rules, not the full MEDRESQ forecast.</p>
+  <div class="card"><h3>Upload a CSV file</h3><p class="sub">Columns: site, item, units, daily_demand. Up to 3000 rows. The file is read in this session only and is not saved.</p>
+   <label class="drop" id="drop"><input type="file" id="fl" accept=".csv,text/csv"><b>Choose a CSV file</b><span>or drop it here</span></label>
+   <p><a href="/api/upload/template.csv">Download the template</a></p><div id="up_out"></div></div>`;
+  const fl=$("#fl"),dr=$("#drop");const go2=f=>{if(!f)return;if(f.size>1000000){$("#up_out").textContent="The file is too large (limit 1 MB).";return}const rd=new FileReader();rd.onload=()=>doUpload(rd.result);rd.readAsText(f)};
+  fl.onchange=()=>go2(fl.files[0]);["dragover","dragenter"].forEach(e=>dr.addEventListener(e,ev=>{ev.preventDefault();dr.classList.add("hot")}));["dragleave","drop"].forEach(e=>dr.addEventListener(e,ev=>{ev.preventDefault();dr.classList.remove("hot")}));dr.addEventListener("drop",ev=>go2(ev.dataTransfer.files[0]));
+}
+async function doUpload(text){const r=await api("/api/upload",{csv:text}),o=$("#up_out");if(r.error){o.innerHTML=`<p class="bad">${esc(r.error)}</p>`;return}
+  o.innerHTML=`<p><b>${r.rows}</b> rows read.${r.errors.length?` <span class="muted">${r.errors.map(esc).join("; ")}</span>`:""}</p>
+  <h4>Running out (under 3 days)</h4>${r.at_risk.length?`<table><tr><th>Center</th><th>Medicine</th><th class="n">Days left</th></tr>${r.at_risk.map(x=>`<tr><td>${esc(x.site)}</td><td>${esc(x.item)}</td><td class="n">${esc(x.days)}</td></tr>`).join("")}</table>`:`<p class="muted">Nothing is under 3 days of stock.</p>`}
+  <h4>Suggested transfers</h4>${r.plan.length?`<table><tr><th>Medicine</th><th>From</th><th>To</th><th class="n">Units</th><th class="n">Receiver days</th><th class="n">Sender days after</th></tr>${r.plan.map(x=>`<tr><td>${esc(x.item)}</td><td>${esc(x.from)}</td><td>${esc(x.to)}</td><td class="n">${esc(x.qty)}</td><td class="n">${esc(x.to_before)} &rarr; ${esc(x.to_after)} days</td><td class="n">${esc(x.from_after)} days</td></tr>`).join("")}</table>`:`<p class="muted">No transfer is possible: no center has spare stock for the ones that are running out.</p>`}
+  <p class="note">Simple rule: the receiver is brought to 7 days, and the sender keeps at least 14 days. Controlled medicines are skipped.</p>`}
+/* ---------- from problem to impact ---------- */
+const IMP=[["expired","Share of stock that expires unused (per year)","%"],["stockout","Stockout events for important medicines (per year)","events"],["phone","Time to arrange one transfer by phone today","hours"],["expval","Value of medicines that expire unused (per year)","JD"],["shortval","Cost of shortages: emergency buying, lost sales (per year)","JD"]];
+const LINKS=[["JFDA, Jordan Food and Drug Administration","https://www.jfda.jo"],["Ministry of Health, Jordan","https://www.moh.gov.jo"],["Drug Shortages in Jordan: A Cross-Sectional National Survey","https://archives.ju.edu.jo/index.php/jjps/article/view/11834"],["Storage and Wastage of Drug Products in Jordanian Households: A Cross-Sectional Survey (households, not hospitals)","https://staff.najah.edu/en/publications/1309/"],["Medicine for chronic diseases in short supply at public healthcare establishments (Jordan News)","https://jordannews.jo/Section-109/News/Medicine-for-chronic-diseases-in-short-supply-at-public-healthcare-establishments-14206"],["Parliamentary committee discusses shortages of medicines in gov't hospitals (Jordan News)","https://www.jordannews.jo/Section-109/News/Parliamentary-committee-discusses-shortages-of-medicines-in-gov-t-hospitals-28196"],["Medication supply interruptions in Jordan cause anxiety among patients (Jordan News)","https://www.jordannews.jo/Section-109/News/Medication-supply-interruptions-in-Jordan-cause-anxiety-among-patients-28113"]];
+function impLoad(){try{return JSON.parse(localStorage.getItem("medresq_impact")||"{}")}catch(e){return {}}}
+function impSave(){const o={};IMP.forEach(([k])=>{o[k]={v:$("#iv_"+k).value,s:$("#is_"+k).value}});try{localStorage.setItem("medresq_impact",JSON.stringify(o))}catch(e){}IMP.forEach(([k])=>{const ok=$("#iv_"+k).value&&$("#is_"+k).value.trim();const c=$("#ic_"+k);c.textContent=ok?"Entered by you":"Needs a source";c.className="chip "+(ok?"":"warn")});impCalc()}
+async function impact(){
+  if(!RES)RES=await api("/api/results");const sv=impLoad();
+  let ex=[0,0],so=[0,0];if(RES.summary){const by={};RES.summary.forEach(r=>{(by[r.scenario]=by[r.scenario]||{})[r.policy[0]]=r});const sc=Object.keys(by),rg=f=>{const v=sc.map(f);return [Math.min(...v),Math.max(...v)]};so=rg(k=>100*(1-by[k].C.stockout_days/by[k].A.stockout_days));ex=rg(k=>100*(1-by[k].C.expiry_loss/by[k].A.expiry_loss))}
+  window.__ratios={ex,so};
+  $("#main").innerHTML=`<h2 class="page">From problem to impact</h2><p class="lede">How the idea turns into a result, and which real numbers are still needed. This page never shows a figure without saying where it comes from.</p>
+  <div class="chain"><div><small>Problem</small><b>Stock is invisible across centers</b><span>One runs out while another holds surplus that expires.</span></div><i>&rarr;</i><div><small>Cause</small><b>Each center orders alone</b><span>No shared view, no early warning, transfers by phone.</span></div><i>&rarr;</i><div><small>MEDRESQ</small><b>Shared view and proposed transfers</b><span>Predicts the day each medicine runs out and suggests who can help.</span></div><i>&rarr;</i><div class="last"><small>Impact (simulated)</small><b>Fewer stockouts, less expiry</b><span>${fmt(so[0],0)}-${fmt(so[1],0)}% fewer stockout days and ${fmt(ex[0],0)}-${fmt(ex[1],0)}% less expiry loss in the simulation.</span></div></div>
+  <div class="card"><h3>Real figures you still need</h3><p class="sub">Type a figure and where it comes from (a person, a report, a document). It stays in this browser only.</p>
+   <table class="impt"><tr><th>Measure</th><th>Your figure</th><th>Source</th><th></th></tr>${IMP.map(([k,l,u])=>{const x=sv[k]||{v:"",s:""},ok=x.v&&x.s.trim();return `<tr><td>${l}</td><td><input id="iv_${k}" type="number" min="0" value="${esc(x.v)}" oninput="impSave()" aria-label="${l}"> <small>${u}</small></td><td><input id="is_${k}" type="text" maxlength="120" value="${esc(x.s)}" placeholder="Who or what document" oninput="impSave()"></td><td><span id="ic_${k}" class="chip ${ok?"":"warn"}">${ok?"Entered by you":"Needs a source"}</span></td></tr>`}).join("")}</table></div>
+  <div class="card"><h3>What could it mean for one center?</h3><p class="sub">An illustration only. It applies the simulation's percentages to your figures. Real results may be different.</p><div class="svbox" id="imp_out"></div></div>
+  <div class="card"><h3>Where to find real numbers</h3><p class="sub">Starting points only. We did not take numbers from these pages. Open them, check the figure and the year, then enter it above with the source.</p>
+   <ul class="links">${LINKS.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a></li>`).join("")}</ul></div>`;
+  impCalc();
+}
+function impCalc(){const o=$("#imp_out");if(!o||!window.__ratios)return;const {ex,so}=window.__ratios,xv=+$("#iv_expval").value,sc=+$("#iv_stockout").value;
+  const card=(t,a,b,u)=>`<div class="svc"><small>${t}</small><b>${a?`${fmt(a*b[0]/100)} to ${fmt(a*b[1]/100)}${u}`:"-"}</b><span>${a?"less per year, if the simulated percentages held":"Enter your figure above."}</span></div>`;
+  o.innerHTML=card("Less value lost to expiry",xv,ex," JD")+card("Fewer stockout events",sc,so,"")+`<p class="svnote">Illustration based on simulated percentages. Not a promise and not a measured result.</p>`}
+/* ---------- pitch mode ---------- */
+let PT=null,PR=null;
+const PITCH=[
+ {t:"Meet the network: 8 hospitals and pharmacies in Amman. A disruption has delayed shipments and raised demand at three of them.",ms:9000,run:async()=>{const r=await api("/api/pitch",{step:"reset"});PR=r.rec;await go("network")}},
+ {t:"Red pins are centers about to run out of medicines. We select the center with the most urgent need.",ms:8000,run:async()=>{await go("network");window.pick&&pick(PR.dst)}},
+ {t:"MEDRESQ finds centers with spare stock and proposes transfers. The arrows on the map show them.",ms:8000,run:async()=>{await go("recs")}},
+ {t:"Every center has its own page. The receiving center sees the proposal and asks for the medicine.",ms:9000,run:async()=>{CUR=PR.dst;await go("centers")},acts:[{at:5000,fn:async()=>{await api("/api/pitch",{step:"confirm_dst"});await centers();toast("Confirmed. Waiting for the other center.")}}]},
+ {t:"The sending center sees the request on its own page and confirms it. Nothing ships until both agree.",ms:9000,run:async()=>{CUR=PR.src;await go("centers")},acts:[{at:5000,fn:async()=>{await api("/api/pitch",{step:"confirm_src"});await centers();toast("Both centers agreed. Shipped!")}}]},
+ {t:"The shipment is on the way. The map shows the truck with its arrival day.",ms:8000,run:async()=>{await go("network")}},
+ {t:"Two days later it arrives, and the receiving center gets a notification.",ms:8000,run:async()=>{await api("/api/pitch",{step:"advance"});CUR=PR.dst;await go("centers")}},
+ {t:"Every approved transfer adds to the estimated saving. These are simulated dinars.",ms:8000,run:async()=>{await go("network")}},
+ {t:"Over 100 simulated runs per scenario, MEDRESQ costs 19% to 24% less than working site by site.",ms:9000,run:async()=>{await go("savings")}},
+ {t:"All data is synthetic and prices are assumptions. Next: interviews with pharmacists, then a read-only pilot.",ms:9000,run:async()=>{await go("overview")}}];
+function pitchBar(){const s=PITCH[PT.i],n=PITCH.length;
+  $("#pitch").className="on";$("#pitch").innerHTML=`<div class="pbar"><i style="animation-duration:${s.ms/PT.speed}ms;animation-play-state:${PT.paused?"paused":"running"}"></i></div><p>${s.t}</p>
+  <div class="pc"><button onclick="pitchGo(${PT.i-1})" ${PT.i==0?"disabled":""} aria-label="Previous">&#9664;</button><button onclick="pitchPause()" aria-label="Pause">${PT.paused?"&#9654; Play":"&#10074;&#10074; Pause"}</button><button onclick="pitchGo(${PT.i+1})" aria-label="Next">&#9654;&#9654;</button><span>Step ${PT.i+1} of ${n}</span><span style="flex:1"></span><button onclick="pitchSpeed()">Speed x${PT.speed}</button><button onclick="pitchEnd()">Exit</button></div>`}
+async function pitchStart(){if(!ME||ME.role!="coordinator")return;PT={i:0,paused:false,speed:1,tok:0,left:0};$("#shield").className="on";pitchGo(0)}
+async function pitchGo(i){if(!PT)return;if(i<0)return;if(i>=PITCH.length){pitchEnd();return}
+  clearTimeout(PT.timer);(PT.acts||[]).forEach(clearTimeout);PT.acts=[];PT.i=i;const tok=++PT.tok,s=PITCH[i];PT.started=performance.now();PT.left=s.ms;pitchBar();
+  try{await s.run()}catch(e){}if(!PT||tok!=PT.tok)return;
+  (s.acts||[]).forEach(a=>PT.acts.push(setTimeout(()=>{if(PT&&tok==PT.tok&&!PT.paused)a.fn()},a.at/PT.speed)));pitchSchedule(tok)}
+function pitchSchedule(tok){if(!PT||PT.paused)return;clearTimeout(PT.timer);PT.started=performance.now();PT.timer=setTimeout(()=>{if(PT&&tok==PT.tok)pitchGo(PT.i+1)},PT.left/PT.speed)}
+function pitchPause(){if(!PT)return;PT.paused=!PT.paused;if(PT.paused){clearTimeout(PT.timer);PT.left=Math.max(500,PT.left-(performance.now()-PT.started)*PT.speed)}else pitchSchedule(PT.tok);pitchBar()}
+function pitchSpeed(){if(!PT)return;PT.speed=PT.speed==1?1.5:PT.speed==1.5?0.7:1;clearTimeout(PT.timer);pitchBar();pitchSchedule(PT.tok)}
+function pitchEnd(){if(!PT)return;clearTimeout(PT.timer);(PT.acts||[]).forEach(clearTimeout);PT=null;$("#pitch").className="";$("#pitch").innerHTML="";$("#shield").className=""}
+addEventListener("keydown",e=>{if(!PT)return;if(e.key=="Escape")pitchEnd();else if(e.key=="ArrowRight")pitchGo(PT.i+1);else if(e.key=="ArrowLeft")pitchGo(PT.i-1);else if(e.key==" "){e.preventDefault();pitchPause()}});
+
+/* ---------- center workspaces ---------- */
+let CUR=null,ASK={mode:"request",item:0,qty:5};
+try{CUR=localStorage.getItem("medresq_cur")||null}catch(e){}
+function toast(m,ok=true){const t=document.createElement("div");t.className="toast "+(ok?"good":"bad");t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.classList.add("out"),2600);setTimeout(()=>t.remove(),3100)}
+async function centers(){
+  const st=await api("/api/state"),sites=mkSites(st.network);const ck=$("#clock");if(ck)ck.textContent=st.tiles.day;
+  if(!CUR||!sites.find(x=>x.id==CUR))CUR=(sites.find(x=>x.status=="risk")||sites[0]).id;
+  if(ME&&ME.role=="manager")CUR=ME.site;const RO=!(ME&&ME.role=="manager");
+  const vs=await Promise.all(sites.map(x=>api("/api/site/"+x.id))),SH=(await api("/api/shipments")).filter(x=>x.src==CUR||x.dst==CUR);
+  const V={};vs.forEach(v=>V[v.id]=v);
+  const chips=sites.map(x=>{const n=V[x.id].inbox.filter(r=>!r.me_ok).length;
+    return `<button class="cb ${x.id==CUR?"on":""} ${x.status}" onclick="pickC('${x.id}')"><span class="mini">${x.type=="hospital"?"+":"Rx"}</span><b>${x.short}</b><small>${n?n+" waiting":"all clear"}</small></button>`}).join("");
+  const me=sites.find(x=>x.id==CUR),v=V[CUR];
+  $("#main").innerHTML=`<h2 class="page">My center</h2><p class="lede">Every center manager works from their own page. You answer only for your center: you ask for medicine, offer spare stock, and confirm or decline. A transfer ships only when both centers agree.</p>
+  ${ME&&ME.role=="manager"?"":`<div class="chooser">${chips}</div>`}
+  <div class="wshead ${me.status}"><div class="av"><span class="ring"></span>${me.type=="hospital"?"+":"Rx"}</div><div><small>Demo sign-in</small><h2>${me.name}</h2><span class="muted">Center manager</span></div>
+   <div class="wpills"><span class="wp ${me.low?"bad":"good"}">${me.low?me.low+" medicines under 3 days":"Nothing close to running out"}</span><span class="wp">${v.inbox.filter(r=>!r.me_ok).length?v.inbox.filter(r=>!r.me_ok).length+" waiting":"all clear"}</span></div></div>
+  <h3 class="sect">Needs your answer</h3>
+  ${RO?`<p class="note">View only. Only the manager of this center can answer for it.</p>`:""}${v.inbox.length?v.inbox.map(r=>wsCard(r,RO)).join(""):`<div class="card"><p class="muted" style="margin:0">Nothing is waiting for ${me.name}. You can still ask for medicine or offer spare stock below.</p></div>`}
+  ${SH.length?`<h3 class="sect">On the way</h3><div class="ships">${SH.map(shipCard).join("")}</div>`:""}
+  <div class="wscols">${RO?"":`<div class="card"><h3>New request or offer</h3><p class="sub">Ask for medicine you are short of, or offer stock you can spare. MEDRESQ finds the best partner center, and that center must confirm.</p>
+   <div class="seg"><button id="m-request" class="${ASK.mode=="request"?"on":""}" onclick="setMode('request')">Ask for medicine</button><button id="m-offer" class="${ASK.mode=="offer"?"on":""}" onclick="setMode('offer')">Offer spare stock</button></div>
+   <label class="fl">Medicine<select id="a-item" onchange="ASK.item=+this.value">${v.stock.map(x=>`<option value="${x.i}" ${x.i==ASK.item?"selected":""}>${x.name}</option>`).join("")}</select></label>
+   <label class="fl">Quantity<input id="a-qty" type="number" min="1" value="${ASK.qty}" onchange="ASK.qty=+this.value"></label>
+   <button class="btn" onclick="sendAsk()">Send</button>${ALT&&ALT.length?altPanel():""}</div>`}
+   <div class="card"><h3>My activity</h3>${v.activity.length?`<ul class="act">${v.activity.map(a=>`<li><b>${a.action}</b> <span>${a.item}</span> <span class="muted">${a.qty} units</span><small>${a.time}</small></li>`).join("")}</ul>`:`<p class="muted" style="margin:0">No activity yet.</p>`}</div></div>
+  <h3 class="sect">My stock</h3><p class="sub">Sorted by days left. Use the buttons to ask for more or offer spare stock.</p>
+  <div class="card stk"><table><tr><th>Medicine</th><th class="n">Units</th><th>Days left</th><th></th></tr>${v.stock.slice().sort((a,b)=>a.days-b.days).map(x=>{const c=x.days<3?"#d6382c":x.days<7?"#f08a3c":x.days<14?"#e8c24a":"#2f8f63";
+   return `<tr><td>${x.name}${x.crit==3?' <span class="crit">critical</span>':""}</td><td class="n">${fmt(x.units)}</td><td><div class="dbar"><i style="width:${Math.min(x.days,28)/28*100}%;background:${c}"></i><span>${x.days>=99?"99+":fmt(x.days,1)}</span></div></td>
+   <td class="n">${x.days<14?`<button class="mb" onclick="prefill(${x.i},'request')">Ask for more</button>`:`<button class="mb alt" onclick="prefill(${x.i},'offer')">Offer spare</button>`}</td></tr>`}).join("")}</table></div>`;
+}
+const shipCard=x=>{const k=Math.max(0,Math.min(1,(x.today-x.sent_day)/Math.max(1,x.arrive_day-x.sent_day)));return `<div class="ship ${x.status=="delivered"?"done":""}"><div class="sr"><b>${x.src_name}</b><span class="lane"><i style="width:${x.status=="delivered"?100:k*100}%"></i><u style="left:${x.status=="delivered"?100:k*100}%">&#128230;</u></span><b>${x.dst_name}</b></div><div class="sm">${x.qty} units of ${x.item_name} &middot; ${x.status=="delivered"?"delivered":"arrives on day "+x.arrive_day}</div></div>`};
+let ALT=null;
+const altPanel=()=>`<div class="alt"><h4>Ideas for the pharmacist to consider</h4><ul>${ALT.map(a=>`<li><b>${a.item}</b> is available at ${a.site} (${a.days} days of stock)</li>`).join("")}</ul><p class="note">Same therapeutic class only. These are ideas, not substitution rules. A pharmacist must decide.</p></div>`;
+function wsCard(r,ro){const st=[["Suggested",1],["Receiver confirms",r.side=="receive"?r.me_ok:r.other_ok],["Sender confirms",r.side=="send"?r.me_ok:r.other_ok],["Shipped",r.status!="pending"]];
+  const stp=`<div class="stp">${st.map(([l,on],i)=>`<span class="${on?"on":""}" style="--i:${i}"><i></i><em>${l}</em></span>`).join("")}</div>`;
+  const v=r.cover||{},recv=r.side=="receive",b=recv?v.dst_before:v.src_before,a=recv?v.dst_after:v.src_after;
+  const msg=r.me_ok?(r.other_ok?"":"You confirmed. Waiting for the other center."):(r.other_ok?"The other center already confirmed. Your answer is the last step.":"");
+  return `<div class="wcard ${recv?"in":"out"}" id="wc${r.id}"><div class="wic">${recv?"&darr;":"&uarr;"}</div><div class="wbody"><h4>${recv?`Receive ${r.qty} units of ${r.item_name} from ${r.src_name}`:`Send ${r.qty} units of ${r.item_name} to ${r.dst_name}`}</h4>
+   <div class="small-d">${nice(r,r.reason)}</div>
+   <div class="fig"><div><small>Your stock</small><b>${fmt(b,1)} &rarr; ${fmt(a,1)} days</b></div><div><small>Net benefit</small><b class="net">${fmt(r.net_benefit_jd,2)} JD</b></div><div><small>Transfer cost</small><b>${fmt(r.cost_jd,2)} JD</b></div></div>
+   ${stp}${msg?`<p class="wait"><span class="dots"><i></i><i></i><i></i></span>${msg}</p>`:""}
+   ${(r.me_ok||ro||r.status!="pending")?"":`<div class="acts">${recv?`<button class="btn ok" onclick="siteAct(${r.id},'${r.dst}','accept')">Request it</button><button class="btn no" onclick="siteAct(${r.id},'${r.dst}','decline')">No thanks</button>`
+   :`<button class="btn ok" onclick="siteAct(${r.id},'${r.src}','accept')">Send it</button><input id="sq${r.id}" type="number" min="1" max="${r.qty}" value="${r.qty}" style="width:80px" aria-label="Quantity"><button class="btn alt" onclick="siteAct(${r.id},'${r.src}','accept',+$('#sq${r.id}').value)">Send fewer</button><button class="btn no" onclick="siteAct(${r.id},'${r.src}','decline')">Can't spare</button>`}</div>`}</div></div>`}
+function pickC(id){CUR=id;try{localStorage.setItem("medresq_cur",id)}catch(e){}centers()}
+function setMode(m){ASK.mode=m;$("#m-request").classList.toggle("on",m=="request");$("#m-offer").classList.toggle("on",m=="offer")}
+function prefill(i,m){ASK.item=i;ASK.mode=m;ASK.qty=Math.max(1,ASK.qty);setMode(m);$("#a-item").value=i;const f=$("#a-item").closest(".card");f.scrollIntoView({behavior:"smooth",block:"center"});f.classList.remove("flash");void f.offsetWidth;f.classList.add("flash")}
+async function sendAsk(){ASK.item=+$("#a-item").value;ASK.qty=+$("#a-qty").value;
+  const r=await api("/api/site_request",{site:CUR,mode:ASK.mode,item:ASK.item,qty:ASK.qty});
+  ALT=r.alternatives||null;if(r.error)toast(r.error,false);else toast("Request sent.");centers()}
+async function siteAct(id,site,action,qty,cold){const r=await api("/api/site_action",{id,site,action,qty,cold_ok:!!cold});
+  if(r.error&&/^Cold-chain transport/.test(r.error)){if(confirm(window.__lang&&window.__lang()=="ar"?"هذا الدواء يحتاج نقلًا مبرّدًا. هل تؤكد أنك تستطيع إرساله مبرّدًا؟":"This medicine needs cold-chain transport. Do you confirm that you can send it refrigerated?"))return siteAct(id,site,action,qty,true);return}
+  if(r.error){toast(r.error,false);const c=$("#wc"+id);if(c&&r.error=="This request is no longer open"){c.classList.add("gone");setTimeout(centers,650)}else if(!c||r.error!="This request is no longer open")centers();return}
+  toast(r.state=="shipped"?"Both centers agreed. Shipped!":r.state=="declined"?"Declined.":r.state=="failed"?"Agreed, but the stock was not available.":"Confirmed. Waiting for the other center.",r.state!="failed");centers()}
+/* count-up for the big numbers */
+function countUp(root){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;(root||document).querySelectorAll(".status b,.svc b").forEach(el=>{if(el.dataset.cu)return;el.dataset.cu=1;const t=el.textContent,m=t.match(/[\d][\d,]*\.?\d*/);if(!m)return;const to=parseFloat(m[0].replace(/,/g,"")),dec=(m[0].split(".")[1]||"").length,pre=t.slice(0,m.index),suf=t.slice(m.index+m[0].length),t0=performance.now();
+  const f=n=>{const k=Math.min(1,(n-t0)/800),e=1-Math.pow(1-k,3);el.textContent=pre+(to*e).toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(k<1)requestAnimationFrame(f);else el.textContent=t};requestAnimationFrame(f)})}
+async function savings(){
+  RES=await api("/api/results");
+  if(!RES.summary){$("#main").innerHTML=`<div class="card"><h3>Savings dashboard</h3><p>No experiment results found. Run <code>python3 run_experiments.py</code> first.</p></div>`;return}
+  const S=RES.summary,P=RES.paired.filter(x=>x.metric=="total_cost");
+  const byS={};S.forEach(r=>{(byS[r.scenario]=byS[r.scenario]||{})[r.policy[0]]=r});
+  const names={normal:"Normal",delay:"Delay (all sites)",spike:"Spike (all sites)",local_delay:"Delay (3 of 8 sites)",local_spike:"Spike (3 of 8 sites)",local_both:"Delay and spike (3 of 8)",stale:"Stale records (15%)"};
+  const rows=Object.keys(byS).map(sc=>{const a=byS[sc].A,b=byS[sc].B,c=byS[sc].C,pd=P.find(x=>x.scenario==sc);
+   return `<tr><td>${names[sc]||sc}</td><td class="n">${fmt(a.total_cost)}</td><td class="n">${fmt(b.total_cost)}</td><td class="n"><b>${fmt(c.total_cost)}</b></td>
+   <td class="n ${pd.diff_pct<0?"good":"bad"}">${fmt(pd.diff_pct,1)}% <span class="muted">(&plusmn;${fmt(100*pd.ci95/pd.base_mean,1)})</span></td>
+   <td class="n">${fmt(a.stockout_days)} &rarr; ${fmt(c.stockout_days)}</td><td class="n">${fmt(a.expiry_loss)} &rarr; ${fmt(c.expiry_loss)}</td></tr>`}).join("");
+  const AB=RES.ablation?tableAbl(RES.ablation):"";
+  const SE=RES.sensitivity?tableSens(RES.sensitivity):"";
+  const FB=RES.forecast?tableFore(RES.forecast):"";
+  $("#main").innerHTML=`<h2 class="page">Savings</h2><p><a class="btn alt" style="text-decoration:none" href="/report" target="_blank">Weekly report (PDF)</a></p><div id="sv"></div>${headline(P)}${costBars(byS,names)}<div class="card"><h3>Total cost by scenario (${S[0].runs} simulated runs each)</h3>
+  <p class="note">Mean total operating cost in JD over two simulated years, 8 sites and 30 medicines. "Change" is MEDRESQ versus site by site, paired by seed, with a 95% interval. These are simulation results under stated assumptions, not savings in real hospitals.</p>
+  <table><tr><th>Scenario</th><th class="n">A: site by site</th><th class="n">B: manual transfers</th><th class="n">C: MEDRESQ</th><th class="n">C vs A</th><th class="n">Stockout days</th><th class="n">Expiry loss (JD)</th></tr>${rows}</table></div>${AB}${SE}${FB}
+  <div class="card"><h3>Assumptions behind every number</h3><table>${Object.entries(RES.assumptions).map(([k,v])=>`<tr><td>${k}</td><td>${JSON.stringify(v)}</td></tr>`).join("")}</table></div>`;
+}
+function costBars(byS,names){const mx=Math.max(...Object.values(byS).map(v=>v.A.total_cost));
+  return `<div class="card"><h3>Total cost by scenario</h3><p class="note">Grey is site by site, teal is MEDRESQ. Shorter is better. Simulated, in JD over two years.</p>${Object.keys(byS).map(sc=>`<div class="cb"><span>${names[sc]||sc}</span><div class="bars"><div><i class="a" style="width:${byS[sc].A.total_cost/mx*80}%"></i><em>${fmt(byS[sc].A.total_cost/1000,0)}k</em></div><div><i class="c" style="width:${byS[sc].C.total_cost/mx*80}%"></i><em>${fmt(byS[sc].C.total_cost/1000,0)}k</em></div></div></div>`).join("")}</div>`}
+function headline(P){if(!P.length)return "";const v=P.map(x=>-x.diff_pct),lo=Math.min(...v),hi=Math.max(...v);
+  return `<div class="headline">${fmt(lo,0)}% to ${fmt(hi,0)}% lower simulated total cost than site by site, in all ${P.length} scenarios.<small>Paired runs on synthetic data, 95% intervals in the table. Not a result from real hospitals.</small></div>`}
+function tableAbl(A){const sc=[...new Set(A.map(r=>r.scenario))];
+ const pols=[...new Set(A.map(r=>r.policy))];
+ return `<div class="card"><h3>Ablation: remove one component at a time (total cost, JD)</h3><table><tr><th>Variant</th>${sc.map(s=>`<th class="n">${s}</th>`).join("")}</tr>
+ ${pols.map(p=>`<tr><td>${p}</td>${sc.map(s=>{const r=A.find(x=>x.policy==p&&x.scenario==s);return `<td class="n">${r?fmt(r.total_cost):"-"}</td>`}).join("")}</tr>`).join("")}</table>
+ <p class="note">Higher than C_full: the removed component was saving money. Lower than C_full: it costs money and is kept for another reason (critical-medicine coverage, protecting donor sites, expiry). See RESULTS.md.</p></div>`}
+function tableSens(S){return `<div class="card"><h3>Sensitivity: fixed cost per transfer (JD)</h3><table><tr><th>Scenario</th><th>Plan</th><th class="n">Fixed cost</th><th class="n">Total cost</th><th class="n">Transfers</th></tr>
+ ${S.map(r=>`<tr><td>${r.scenario}</td><td>${r.policy}</td><td class="n">${r.fixed_cost}</td><td class="n">${fmt(r.total_cost)}</td><td class="n">${fmt(r.n_transfers)}</td></tr>`).join("")}</table></div>`}
+function tableFore(F){const cols=["chronic","intermittent","seasonal","all"];
+ return `<div class="card"><h3>Forecast benchmark (error on next-7-day demand, lower is better)</h3><table><tr><th>Scenario</th><th>Method</th>${cols.map(c=>`<th class="n">${c}</th>`).join("")}</tr>
+ ${F.map(r=>`<tr><td>${r.scenario}</td><td>${r.method}</td>${cols.map(c=>`<td class="n">${fmt(r[c],3)}</td>`).join("")}</tr>`).join("")}</table></div>`}
+async function audit(){
+  const a=await api("/api/audit");
+  $("#main").innerHTML=`<h2 class="page">Audit log</h2><div class="card"><div class="bar"><span style="flex:1"></span><a class="btn alt" style="text-decoration:none" href="/report" target="_blank">Weekly report (PDF)</a> <a class="btn alt" style="text-decoration:none" href="/api/audit.csv">Download CSV</a></div>
+  ${a.length?`<table><tr><th>Time</th><th>Sim day</th><th>Role</th><th>Action</th><th>Item</th><th>From</th><th>To</th><th class="n">Qty</th><th>Note</th></tr>${a.slice().reverse().map(r=>`<tr><td>${esc(r.time)}</td><td>${esc(r.sim_day)}</td><td>${esc(r.role)}</td><td>${esc(r.action)}</td><td>${esc(r.item)}</td><td>${esc(r.from)}</td><td>${esc(r.to)}</td><td class="n">${esc(r.qty)}</td><td>${esc(r.note)}</td></tr>`).join("")}</table>`:`<p class="muted">No decisions yet. Approve, reject or override a recommendation and it appears here with its role and time.</p>`}</div>`;
+}
+
+/* ---------- guided demo ---------- */
+const TOUR=[
+ {pre:()=>api("/api/reset",{scenario:"local_both",seed:7}),tab:"network",d:"The problem: a disruption has hit 3 of the 8 centers. Red pins are centers about to run out of medicines."},
+ {pre:()=>{CUR="S07"},tab:"centers",d:"Each center also has its own page. The manager of Pharmacy, Sweileh sees what the center needs and confirms or declines. A transfer ships only when both centers agree."},
+ {tab:"recs",d:"MEDRESQ proposes transfers from sites with spare stock. Each one shows its reason, cost and the risk to the donor. Nothing moves without a pharmacist."},
+ {tab:"recs",act:async()=>{const b=document.querySelector(".slip .btn.ok");if(b){b.click();await new Promise(r=>setTimeout(r,900));const sl=document.querySelector(".slip");if(sl)sl.scrollIntoView({block:"start"})}},d:"The pharmacist approves the top proposal. The bars show days of cover before and after at both sites."},
+ {tab:"audit",d:"Every decision is logged with the time, role, quantity and reason, and can be downloaded as a CSV."},
+ {tab:"whatif",act:async()=>{await runWhatif()},d:"What-if: change the disruption and compare both plans on the same random demand."},
+ {tab:"savings",d:"Over 100 simulated runs per scenario MEDRESQ costs less in every scenario. All data is synthetic."}];
+let TI=-1;
+function tourBar(){const s=TOUR[TI];$("#tour").className="on";$("#tour").innerHTML=`<div class="st">Guided demo &middot; step ${TI+1} of ${TOUR.length}</div><p>${s.d}</p><div class="act"><button onclick="tourGo(${TI-1})" ${TI==0?"disabled":""}>Back</button><button class="pri" onclick="${TI==TOUR.length-1?"tourEnd()":"tourGo("+(TI+1)+")"}">${TI==TOUR.length-1?"Finish":"Next"}</button><span style="flex:1"></span><button onclick="tourEnd()">Exit</button></div>`}
+async function tourGo(i){if(i<0||i>=TOUR.length)return;TI=i;const s=TOUR[i];tourBar();if(s.pre)await s.pre();await go(s.tab);if(s.act)await s.act();tourBar()}
+function tourStart(){tourGo(0)}
+function tourEnd(){TI=-1;$("#tour").className="";$("#tour").innerHTML=""}
+async function boot(){const r=await fetch("/api/me");if(r.status==401){nav();showLogin();return}
+  ME=await r.json();if(ME.role=="manager"){CUR=ME.site;tab="centers"}setupUser();nav();render();api("/api/state").then(s=>{$("#clock").textContent=s.tiles.day})}
+boot();
+if("serviceWorker" in navigator&&(location.protocol=="https:"||["localhost","127.0.0.1"].includes(location.hostname)))navigator.serviceWorker.register("/sw.js").catch(()=>{});
+</script>
+</body>
+</html>
