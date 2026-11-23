@@ -71,7 +71,7 @@ More in [`docs/screenshots/`](docs/screenshots/), including the Arabic interface
 
 ## Team
 
-Built by Rakan Qasem, with Noor Shuquara (idea, data collection) and Omar Momani (hardware prototype). See [AUTHORS.md](AUTHORS.md). Licence: [LICENSE](LICENSE) (all rights reserved).
+Built by Rakan Qasem, with Noor Shuquara (idea, data collection) and Omar Momani (hardware prototype). See [AUTHORS.md](AUTHORS.md). Licence: [MIT](LICENSE). The data in this repository are synthetic and the results are simulated; the MEDRESQ name and logo identify the original project.
 
 ---
 
